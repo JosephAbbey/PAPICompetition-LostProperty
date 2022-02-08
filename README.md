@@ -29,14 +29,43 @@ Alex P   |                 |
 
 # List of Objectives
 
+- ## Database:
+    - Items
+        - id         : INT
+        - categories : BLOB([Categories[id]]) (16 categories, 4 bit chunks, list)
+        - image      : BLOB
+        - foundIn    : Locations[id]
+        - storeIn    : INT (Boxes will be numbered)
+
+    - Locations
+        - id           : INT
+        - locationName : STRING
+
+    - Categories
+        - id    : INT
+        - name  : STRING
+
 - ## Back-end:
+    - Notify manager
+        - Send message to manager
     - Add items
+        - Verify input
+        - Add entry to database
+        - Notify manager with appropriate message
     - Get items
+        - Check for categories
+        - Get corresponding database entries
     - Remove items
-    - Item timeout
+        - Verify input
+        - Remove entry from database
+        - Notify manager with approprite message
+    - Item expiry
+        - Get items with entry timestamp before certain timestamp
+        - Remove item
 
 - ## Front-end:
     - Catalogue
+        - 
     - Catagories
     - Details
     - Add item
