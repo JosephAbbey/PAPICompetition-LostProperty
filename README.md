@@ -12,11 +12,11 @@ The solution is to create an accessible catalogue-like system which allows easy 
 
 ## The Team
 
-- Joseph A
-- Ben J
-- Micah B
-- Oxford W
-- Aditya C
+- Joseph A (JosephAbbey)
+- Ben J (BenjaminJones07)
+- Micah B (123mjb)
+- Oxford W (notaguydaddy)
+- Aditya C (JustTyping1)
 - James U
 - Alex P
 
@@ -27,7 +27,6 @@ The solution is to create an accessible catalogue-like system which allows easy 
 # List of Objectives
 
 - ## Back-end:
-    - API
     - Add items
     - Get items
     - Remove items
