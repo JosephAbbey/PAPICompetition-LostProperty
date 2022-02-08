@@ -12,13 +12,15 @@ The solution is to create an accessible catalogue-like system which allows easy 
 
 ## The Team
 
-- Joseph A (JosephAbbey)
-- Ben J (BenjaminJones07)
-- Micah B (123mjb)
-- Oxford W (notaguydaddy)
-- Aditya C (JustTyping1)
-- James U
-- Alex P
+Name     | Github Username |
+:-------:|:---------------:|
+Joseph A | JosephAbbey     |
+Ben J    | BenjaminJones07 |
+Micah B  | 123mjb          |
+Oxford W | notaguydaddy    |
+Aditya C | JustTyping1     |
+James U  |                 |
+Alex P   |                 |
 
 ## Languages:
 - Back-end : Python
