@@ -22,6 +22,7 @@ The solution is to create an accessible catalogue-like system which allows easy 
 
 ## Languages:
 - Back-end : Python
+- Communication : Flask API
 - Front-end : HTML/JS (React possibly)
 
 # List of Objectives
