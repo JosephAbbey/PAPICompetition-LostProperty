@@ -24,6 +24,7 @@ Alex P   |                 |
 
 ## Languages:
 - Back-end : Python
+- Communication : Flask API
 - Front-end : HTML/JS (React possibly)
 
 # List of Objectives
