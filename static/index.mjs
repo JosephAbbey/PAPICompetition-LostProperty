@@ -1,3 +1,3 @@
-import Item from "item.mjs";
+import CatalogueItem from "./item.mjs";
 
-customElements.define('item', Item);
+customElements.define('catalogue-item', CatalogueItem);
