@@ -1,0 +1,32 @@
+Item ()
+
+Notify manager: (Message: str) -> None
+    Format Message as an email
+    Send email
+
+Add item: (Title: str, Photo: Bytes, Type: Int, Where: Int, StoreID: int) -> None
+    Verify that input exists
+
+    Verify that type is valid (Categories lookup)
+    Verify that location is valid (Locations lookup)
+    Verify that store ID is below maximum storage
+
+    Add new database entry:
+        - id        : AUTO
+        - category  : Type
+        - image     : Photo
+        - foundIn   : Where
+        - storeIn   : StoreID
+
+Get items: (Types: List[int]) -> List[Items]
+    Get from database:
+        category in Types
+    
+    Format items as Items
+
+    Return List[Items]
+
+Things to add at a later point:
+    - SQL Escape on input:
+        This is not required as data is only inputed by a trusted source. The only
+        way anyone else gets access to the database is reading.

@@ -31,11 +31,11 @@ Alex P   |                 |
 
 - ## Database:
     - Items
-        - id         : INT
-        - categories : BLOB([Categories[id]]) (16 categories, 4 bit chunks, list)
-        - image      : BLOB
-        - foundIn    : Locations[id]
-        - storeIn    : INT (Boxes will be numbered)
+        - id       : INT
+        - category : Categories[id]
+        - image    : BLOB
+        - foundIn  : Locations[id]
+        - storeIn  : INT (Boxes will be numbered)
 
     - Locations
         - id           : INT
@@ -45,27 +45,49 @@ Alex P   |                 |
         - id    : INT
         - name  : STRING
 
+    Me and Joseph's hacky solution to name duplication while accounting for unused rows and fragmented IDs:
+
+    ```
+    +------+-------------+----+
+    |  0   | Gloves      | 10 |
+    |  1   | PE Shorts   |  1 |
+    /  2   / Pizza Slice /  0 /
+    |  3   | Air Pods    |  3 |
+    +------+-------------+----+
+    ```
+
+    - Names
+        - id       : INT
+        - name     : TEXT
+        - refCount : INT
+
+    - EmptyRows
+        - rowID    : INT
+
+
 - ## Back-end:
-    - Notify manager
+    - Notify manager (Pseudone)
         - Send message to manager
-    - Add items
+    - Add item (Pseudone)
         - Verify input
         - Add entry to database
         - Notify manager with appropriate message
-    - Get items
+    - Get items (Pseudoing)
         - Check for categories
         - Get corresponding database entries
-    - Remove items
+    - Remove item
         - Verify input
         - Remove entry from database
         - Notify manager with approprite message
     - Item expiry
         - Get items with entry timestamp before certain timestamp
         - Remove item
+    - Photo get
+        - Verify valid ID
+        - Return DB BLOB as Photo
 
 - ## Front-end:
     - Catalogue
-        - 
     - Catagories
     - Details
     - Add item
