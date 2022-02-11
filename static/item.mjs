@@ -1,3 +1,5 @@
+import * as config from "./config.mjs";
+
 export default class CatalogueItem extends HTMLElement {
     constructor() {
         super();
@@ -6,7 +8,8 @@ export default class CatalogueItem extends HTMLElement {
             colour: this.attributes.colour.value,
             "found-in": this.attributes["found-in"].value,
             title: this.attributes.title.value,
-            category: this.attributes.category.value
+            category: this.attributes.category.value,
+            image: this.attributes.image.value
         }
     
         const _style = document.createElement('style');
@@ -14,21 +17,28 @@ export default class CatalogueItem extends HTMLElement {
     
         _style.innerHTML = `
         img {
-            width: 100px;
-            height: 100px;
-            display: inline-block;
-        }
-        h1 {
-          color: tomato;
+          width: 6rem;
+          height: 6rem;
           display: inline-block;
+        }
+        div {
+          display: grid;
+          grid-template-columns: 6.5rem 12rem;
+          padding: 1rem;
+          margin: 0.5rem;
+          border-radius: 1rem;
+          border: 1px solid #000;
+          width: fit-content;
         }
         `;
     
         _template.innerHTML = `
-        <img src="die" />
-        <h1>
-          ${this.attrs.title}
-        </h1>
+        <div>
+          <img title="${this.attrs.title}" src="${config.PHOTO_API + this.attrs.image}" />
+          <h1>
+            ${this.attrs.title}
+          </h1>
+        </div>
       `;
     
         this.attachShadow({ mode: 'open' });
