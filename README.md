@@ -32,6 +32,7 @@ Alex P   |                 |
 - ## Database:
     - Items
         - id       : INT
+        - title    : Names[id]
         - category : Categories[id]
         - image    : BLOB
         - foundIn  : Locations[id]
@@ -71,18 +72,17 @@ Alex P   |                 |
     - Add item (Pseudone)
         - Verify input
         - Add entry to database
-        - Notify manager with appropriate message
-    - Get items (Pseudoing)
+    - Get items (Pseudone)
         - Check for categories
         - Get corresponding database entries
-    - Remove item
+    - Remove item (Pseudone)
         - Verify input
         - Remove entry from database
-        - Notify manager with approprite message
-    - Item expiry
+    - Item expiry (Pseudone)
         - Get items with entry timestamp before certain timestamp
         - Remove item
-    - Photo get
+        - Notify manager with approprite message
+    - Photo get (Pseudone)
         - Verify valid ID
         - Return DB BLOB as Photo
 
