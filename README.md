@@ -46,7 +46,7 @@ Alex P   |                 |
         - id    : INT
         - name  : STRING
 
-    Me and Joseph's hacky solution to name duplication while accounting for unused rows and fragmented IDs:
+    Ben and Joseph's hacky solution to name duplication while accounting for unused rows and fragmented IDs:
 
     ```
     +------+-------------+----+

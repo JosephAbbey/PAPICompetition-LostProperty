@@ -1,0 +1,1 @@
+MAX_STORE: int = 5

@@ -1,4 +1,4 @@
-class Item (Title, Photo, Type, Where, StoreID)
+class Item (Title, Photo, Category, Where, StoreID)
     Groups an item's attributes in a way that can be accessed where required
 
 class AtomSafeDB (Database)
@@ -14,7 +14,7 @@ class AtomSafeDB (Database)
         Release lock
         Return results
 
-    ExecuteIterAS (function: F (int, List[str]) -> Union[Tuple[None, Any], str], obj: threading.lock) -> Tuple
+    ExecuteIterAS (function: F (int, List[str]) -> Union[Tuple[None, Any], str], obj: threading.lock) -> Any
         Wait until lock can aquired
         Initiate step to 0
         While F(step, results) is not (None, x),
