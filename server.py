@@ -1,7 +1,7 @@
+from typing import Any, Callable, Dict, ForwardRef, Tuple, TypedDict, Union, List
 from flask import Flask, jsonify, Response, request
 from sqlite3 import Connection, connect, Cursor
 from threading import Lock
-from typing import Any, Callable, Dict, Tuple, TypedDict, Union, List
 import configs
 
 # Base classes and exceptions
@@ -20,89 +20,70 @@ class BadItem(Exception):
     def __init__(self, message: str = "One or more parameters broke the promises on Item") -> None:
         super().__init__(message)
 
-# Classes
-"""
-Promises:
-    - ExecuteAS and ExecuteIterAS will block any other execution on the database by threads using the same lock
+class BadDB(Exception):
+    def __init__(self, message: str = "The database supplied is not of the class DB") -> None:
+        super().__init__(message)
 
-Not promised:
-    - ExecuteAS and ExecuteIterAS will block all other execution on the database
-"""
-class AtomSafeDB:
+# Classes
+class DB:
     def __init__(self, database: Connection) -> None:
-        self.db = database
+        self.db: Connection = database
         self.cursor: Cursor = self.db.cursor()
-        
-    def generateLock(self) -> Lock:
-        return Lock()
     
-    def Execute(self, command: str) -> Any:
-        return self.cursor.execute(command)
-    
-    def ExecuteAS(self, commands: List[str], lock: Lock) -> List[Any]:
-        lock.acquire()
-        results = []
-        
-        for command in commands:
-            results.append(self.cursor.execute(command))
-            
-        lock.release()
-        return results
-    
-    def ExecuteIterAS(self, function: Callable[[int, List[Any]], Union[Tuple[None, Any], str]], lock: Lock) -> Any:
-        lock.acquire()
-        step, results = 0, []
-        
-        while (x := function(step, results))[0] is not None:
-            results.append(self.cursor.execute(x))
-            step += 1
-            
-        lock.release()
-        return x[1]
-    
+    def Execute(self, command: str, iter: List[Any] = ()) -> Cursor:
+        x = self.cursor.execute(command, iter)
+        self.db.commit()
+        return x
+
 """
 Promises:
     - fields will always be their hinted types
+    - title will always be a valid ID in Names table
     - category will always be a valid ID in Categories table
     - location will always be a valid ID in Locations table
     - store will always be a valid store location
 
 Not promised:
-    - title will always exist in Names table
     - item will always exist in Items table
 """
 class Item:
-    def __init__(self, title: str, photo: bytes, category: int, location: int, store: int, db: AtomSafeDB) -> None:
+    def __init__(self, title: str, image: bytes, category: int, location: int, store: int, db: DB) -> None:
         # Promise 1
-        if not isinstance(title, str): raise BadItem
-        if not isinstance(photo, bytes): raise BadItem
+        if not isinstance(image, bytes): raise BadItem
         
-        for v in [category, location, store]:
+        for v in [title, category, location, store]:
             if not isinstance(v, int): raise BadItem
-            
-        if not isinstance(db, AtomSafeDB): raise BadItem("db is not AtomSafeDB")
         
+        if not isinstance(db, DB): raise BadItem
+
         # Promises 2 and 3
-        for (table, value) in {"categories": category, "locations": location}.items():
-            if len(db.Execute(f"SELECT id FROM {table} WHERE id = {value}")) != 1: raise BadItem(f"Invalid {table}")
-        
+        for (table, value) in {"title": title, "category": category, "location": location}.items():
+            if len(db.Execute(f"SELECT id FROM {table} WHERE id = {value}").fetchall()) != 1: raise BadItem(f"Invalid {table}")
+
         # Promise 4
         if store > configs.MAX_STORE: raise BadItem("Invalid store")
-        
+
+        self._db: DB = db
         self._item: BaseItem = {
-            title: title,
-            photo: photo,
-            category: category,
-            location: location,
-            store: store
+            "title": title,
+            "image": image,
+            "category": category,
+            "location": location,
+            "store": store
         }
     
+    def lookup(self, table: str) -> str:
+        return self._db.Execute(f"SELECT name FROM {table} WHERE id = {self._item[table]}").fetchall()[0][0]
+
     def __str__(self) -> str:
         inner: BaseItem = self._item
-        return f"{inner.category} {inner.title} found in {inner.where} currently stored in box {inner.store}" # Change for category + location lookup
+        category: str = self.lookup("category")
+        title: str = self.lookup("title")
+        location: str = self.lookup("location")
+        return f"{category} {title} found in {location} currently stored in box {inner['store']}" # Change for category + location lookup
     
     def __repr__(self) -> str:
-        return f"Item({self._item=})"
+        return f"{self._item=}"
     
     def dict(self) -> Dict:
         return self._item
@@ -110,14 +91,34 @@ class Item:
     def json(self) -> Response:
         return jsonify(self._item)
 
+    def push(self) -> str:
+        items: List[Tuple[str, Union[int, bytes]]] = [t for t in self._item.items()]
+
+        tables: List[str] = [t[0] for t in items]
+        values: List[Any] = [t[1] for t in items]
+
+        query: str = f"INSERT INTO items ({', '.join(tables)}) VALUES ({', '.join(['?' for _ in enumerate(items)])})"
+        self._db.Execute(query, values)
+
+class ItemHandler:
+    def __init__(self, db: DB) -> None:
+        if not isinstance(db, DB): raise BadDB
+
+        self._db = db
+        self._items: List[BaseItem] = list()
+
+    def pull(self, id: int) -> None:
+        if not isinstance(id, int): raise InvalidInput
+
+        # Not yet checked
+        self._items.append(Item(self._db.Execute("SELECT * FROM items WHERE id = ?", id).fetchall()[0][1:]))
+
+
 # Globals
 
-database = connect("lostProperty.db")
-ASDB = AtomSafeDB(database)
-NamesLock = ASDB.generateLock()
-ERowsLock = ASDB.generateLock()
+conn: Connection = connect("lostProperty.db")
+database: DB = DB(conn)
 
-"""
 # Helper functions
 
 def notify(message: str) -> None:
@@ -127,16 +128,21 @@ def notify(message: str) -> None:
 
 def addItem(item: Item) -> None:
     if item is None: raise InvalidInput
-    
-# Flask
+
+
+# Routes
 
 app = Flask(__name__)
 
 @app.route("/photo")
 def photoAPI():
     id = request.args.get("id")
-"""
 
 if __name__ == "__main__":
-    i = Item("Gloves", bytes.fromhex("50"), 1, 1, 1, ASDB)
+    i = Item(1, bytes.fromhex("41"), 1, 1, 2, database)
     print(i)
+    print(repr(i))
+    print(i.dict())
+    #print(i.push())
+
+    print(database.Execute("SELECT * FROM items;").fetchall())

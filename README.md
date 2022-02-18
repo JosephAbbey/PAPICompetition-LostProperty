@@ -37,6 +37,7 @@ Alex P   |                 |
         - image    : BLOB
         - foundIn  : Locations[id]
         - storeIn  : INT (Boxes will be numbered)
+        - desc     : TEXT
 
     - Locations
         - id           : INT
@@ -46,25 +47,9 @@ Alex P   |                 |
         - id    : INT
         - name  : STRING
 
-    Ben and Joseph's hacky solution to name duplication while accounting for unused rows and fragmented IDs:
-
-    ```
-    +------+-------------+----+
-    |  0   | Gloves      | 10 |
-    |  1   | PE Shorts   |  1 |
-    /  2   / Pizza Slice /  0 /
-    |  3   | Air Pods    |  3 |
-    +------+-------------+----+
-    ```
-
     - Names
         - id       : INT
         - name     : TEXT
-        - refCount : INT
-
-    - EmptyRows
-        - rowID    : INT
-
 
 - ## Back-end:
     - Notify manager (Pseudone)
