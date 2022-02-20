@@ -1,0 +1,63 @@
+class Item (Title, Photo, Category, Where, StoreID) (DONE)
+    Groups an item's attributes in a way that can be accessed where required and ensures all are valid
+
+    Verify that inputs exist
+
+    Verify that title is valid (title lookup)
+    Verify that type is valid (category lookup)
+    Verify that location is valid (location lookup)
+    Verify that store ID is below maximum storage
+
+class DB (connection) (DONE)
+    Offer an execute method that deals with committing and saving changes
+
+Globals:
+    database = DB
+
+Notify manager: (Message: str) -> None (Internal)
+    Format Message as an email
+    Send email
+
+Add item: (i: Item) -> None (Internal) (DONE)
+    Push i to database
+
+Item expiry: (Internal, Startup) (DONE)
+    Get current timestamp - Config.ExpiryTime
+
+    Get list of items before above timestamp
+
+    Remove items by ID
+
+    Format list of items
+
+    Notify manager
+
+Remove item: (ID: int) (Internal) (DONE)
+    Verify that input exists
+
+    Verify item with ID exists
+
+    Remove item
+
+    Notify manager
+
+Get items: (Types: List[int]) -> List[Items] (Route)
+    Get from database:
+        category in Types
+    
+    Format items as Items
+
+    Return List[Items]
+
+Photo get: (ID: int) -> Photo mime (Route) (DONE)
+    Verify that input exists
+
+    Verify that ID is a valid Photo
+
+    Get BLOB from database
+
+    Return BLLOB formatted as Photo
+
+Things to add at a later point:
+    - SQL Escape on input:
+        This is not required as data is only inputed by a trusted source. The only way anyone else gets access to the database is reading.

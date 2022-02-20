@@ -26,6 +26,7 @@ CREATE TABLE items (
     image MEDIUMBLOB,
     location INTEGER NOT NULL,
     store INTEGER NOT NULL,
+    inTime INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (title) REFERENCES title(id),
     FOREIGN KEY (category) REFERENCES category(id),
     FOREIGN KEY (location) REFERENCES location(id)
