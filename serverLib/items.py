@@ -1,12 +1,12 @@
 from typing import Dict, List, Optional, Tuple, TypedDict, Union
-import flask
+import flask, copy
 
 from serverLib import configs, database, exceptions
 
 class BaseItem(TypedDict): # DO NOT TOUCH
     title: int
     category: int
-    photo: bytes
+    image: bytes
     location: int
     store: int
 
@@ -22,7 +22,7 @@ Not promised:
     - item will always exist in Items table
 """
 class Item: # DO NOT CHANGE ITEM YOU WILL INSTANTLY REGRET IT
-    def __init__(self, title: int, category: int, image: bytes, location: int, store: int, db: database.DB) -> None:
+    def __init__(self, title: int, category: int, image: Optional[bytes], location: int, store: int, db: database.DB) -> None:
         # Promise 1
         if not isinstance(image, (bytes, type(None))):
             raise exceptions.BadItem("Promise 1 was broken")
@@ -67,11 +67,13 @@ class Item: # DO NOT CHANGE ITEM YOU WILL INSTANTLY REGRET IT
     def __repr__(self) -> str:
         return f"{self._item=}"
     
-    def dict(self) -> Dict[str, item_fields]:
-        return self._item
+    def dict(self, with_image: bool = True) -> Dict[str, item_fields]:
+        inner: BaseItem = copy.deepcopy(self._item)
+        if not with_image: inner.pop("image", None)
+        return inner
     
     def json(self) -> flask.Response:
-        return flask.jsonify(self._item)
+        return flask.jsonify(self.dict())
     
     def image(self) -> Optional[flask.Response]: # Generate a flask response containing the image
         if not (img := self._item.get("image")):
@@ -124,6 +126,5 @@ class ItemHandler:
     def items(self) -> List[Item]:
         return self._items
     
-    def json(self) -> flask.Response:
-        print(list(map(lambda x: x.dict(), self.items())))
+    def json(self, with_image: bool = False) -> flask.Response:
         return flask.jsonify(list(map(lambda x: x.dict(), self.items()))) # Fix this!!!

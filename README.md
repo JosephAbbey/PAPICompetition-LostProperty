@@ -54,20 +54,20 @@ Alex P   |                 |
 - ## Back-end:
     - Notify manager (Pseudone)
         - Send message to manager
-    - Add item (Pseudone)
+    - Add item (Pseudone) (Done)
         - Verify input
         - Add entry to database
     - Get items (Pseudone)
         - Check for categories
         - Get corresponding database entries
-    - Remove item (Pseudone)
+    - Remove item (Pseudone) (Done)
         - Verify input
         - Remove entry from database
-    - Item expiry (Pseudone)
+    - Item expiry (Pseudone) (Done)
         - Get items with entry timestamp before certain timestamp
         - Remove item
         - Notify manager with approprite message
-    - Photo get (Pseudone)
+    - Photo get (Pseudone) (Done)
         - Verify valid ID
         - Return DB BLOB as Photo
 

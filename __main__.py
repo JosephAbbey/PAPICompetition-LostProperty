@@ -25,9 +25,8 @@ def index():
     
     handler.massPull(f"1=1 LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {id * serverLib.configs.PAGE_SIZE}")
     
-    return str(handler)
+    return handler.json()
     
-
 @app.route("/photo")
 def photoAPI():
     if not (id := request.args.get("id")): return "Error 1 (No ID supplied)"
