@@ -14,14 +14,10 @@ class DB (connection) (DONE)
 Globals:
     database = DB
 
-Notify manager: (Message: str) -> None (Internal)
-    Format Message as an email
-    Send email
-
 Add item: (i: Item) -> None (Internal) (DONE)
     Push i to database
 
-Item expiry: (Internal, Startup) (DONE)
+Item expiry: (Internal, Start-up) (DONE)
     Get current timestamp - Config.ExpiryTime
 
     Get list of items before above timestamp
@@ -58,6 +54,9 @@ Photo get: (ID: int) -> Photo mime (Route) (DONE)
 
     Return BLLOB formatted as Photo
 
+Notify class:
+    Store additions in external file
+
 Things to add at a later point:
     - SQL Escape on input:
-        This is not required as data is only inputed by a trusted source. The only way anyone else gets access to the database is reading.
+        This is not required as data is only inputted by a trusted source. The only way anyone else gets access to the database is reading.

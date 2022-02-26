@@ -1,16 +1,19 @@
 CREATE TABLE title (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    UNIQUE (name)
 );
 
 CREATE TABLE category (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    UNIQUE (name)
 );
 
 CREATE TABLE location (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    UNIQUE (name)
 );
 
 CREATE TABLE items (

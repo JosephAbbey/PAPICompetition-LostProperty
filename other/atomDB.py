@@ -38,27 +38,3 @@ class AtomSafeDB:
         lock.release()
         return x[1]
 """
-"""
-class AtomSafeDB (Database)
-    Execute (command: str) -> Result:
-        Returns the result of the command being executed in the database with NO ATOMIC SAFETY
-    
-    GenerateLock -> threading.lock:
-        Returns a threading.lock()
-
-    ExecuteAS (commands: List[str], obj: threading.lock) -> List
-        Wait until lock can aquired
-        Execute each command in turn and store result
-        Release lock
-        Return results
-
-    ExecuteIterAS (function: F (int, List[str]) -> Union[Tuple[None, Any], str], obj: threading.lock) -> Any
-        Wait until lock can aquired
-        Initiate step to 0
-        While F(step, results) is not (None, x),
-            Run result of F(step, result)
-            Store result
-            Increment step
-        Release lock
-        Return F(step, results)[1]
-"""

@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, render_template, request, redirect
 from serverLib import serverLib
 from sqlite3 import connect
 
@@ -20,13 +20,27 @@ def index():
     except ValueError: id: int = 0
     
     lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
-    
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
     
     handler.massPull(f"1=1 LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {id * serverLib.configs.PAGE_SIZE}")
     
-    return handler.json()
+    return render_template("index.html", json=handler.get())
+
+@app.route("/item")
+def item():
+    if not (id := request.args.get("id")): return redirect("/")
     
+    try: id: int = int(id)
+    except ValueError: return redirect("/")
+    
+    lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
+    handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
+    
+    try: handler.pull(id)
+    except serverLib.exceptions.InvalidInput: return redirect("/")
+    
+    
+        
 @app.route("/photo")
 def photoAPI():
     if not (id := request.args.get("id")): return "Error 1 (No ID supplied)"
@@ -35,7 +49,6 @@ def photoAPI():
     except ValueError: return "Error 2 (Supplied ID was not a number)"
     
     lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
-    
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
     
     try: handler.pull(id)

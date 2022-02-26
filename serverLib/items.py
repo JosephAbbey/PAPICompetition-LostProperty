@@ -1,9 +1,15 @@
+"""
+This module handles the storage of Items as well as methods relating to singular Items.
+"""
+
 from typing import Dict, List, Optional, Tuple, TypedDict, Union
 import flask, copy
 
 from serverLib import configs, database, exceptions
 
-class BaseItem(TypedDict): # DO NOT TOUCH
+# Types
+
+class BaseItem(TypedDict):
     title: int
     category: int
     image: bytes
@@ -12,16 +18,25 @@ class BaseItem(TypedDict): # DO NOT TOUCH
 
 item_fields = Union[int, bytes]
 
-"""
-Promises:
-    - fields will always be their hinted types
-    - title, category, and location will be valid IDs in their respective tables
-    - store will always be a valid store location
+# Classes
 
-Not promised:
-    - item will always exist in Items table
-"""
-class Item: # DO NOT CHANGE ITEM YOU WILL INSTANTLY REGRET IT
+class Item:
+    """
+    The class for storing the information of a singular item.
+    
+    Guarantees:
+        - Fields will always be their hinted types.
+        - The `title`, `category`, and `location` attributes will be valid IDs in their respective tables.
+        - The `store` attribute will always be a valid store location.
+
+    Not guaranteed:
+        - Item will always exist in Items table of the database.
+        
+    Attributes:
+        _db (serverLib.database.DB): The database the `title`, `category`, and `location` IDs reference.
+        _item (serverLib.items.BaseItem): The dictionary holding all necessary details about the Item.
+    """
+    
     def __init__(self, title: int, category: int, image: Optional[bytes], location: int, store: int, db: database.DB) -> None:
         # Promise 1
         if not isinstance(image, (bytes, type(None))):
@@ -54,26 +69,16 @@ class Item: # DO NOT CHANGE ITEM YOU WILL INSTANTLY REGRET IT
     
     def lookup(self, table: str) -> str:
         return self._db.Execute(f"SELECT name FROM {table} WHERE id = ?", self._item[table]).fetchall()[0][0]
-
-    def __str__(self) -> str:
-        inner: BaseItem = self._item
-        
-        category: str = self.lookup("category")
-        title: str = self.lookup("title")
-        location: str = self.lookup("location")
-        
-        return f"{category} {title} found in {location} currently stored in box {inner['store']}"
     
-    def __repr__(self) -> str:
-        return f"{self._item=}"
-    
-    def dict(self, with_image: bool = True) -> Dict[str, item_fields]:
+    def dict(self) -> Dict[str, item_fields]:
         inner: BaseItem = copy.deepcopy(self._item)
-        if not with_image: inner.pop("image", None)
+        inner.pop("image", None)
+        
+        inner["title"] = self.lookup("title")
+        inner["category"] = self.lookup("category")
+        inner["location"] = self.lookup("location")
+        
         return inner
-    
-    def json(self) -> flask.Response:
-        return flask.jsonify(self.dict())
     
     def image(self) -> Optional[flask.Response]: # Generate a flask response containing the image
         if not (img := self._item.get("image")):
@@ -83,6 +88,17 @@ class Item: # DO NOT CHANGE ITEM YOU WILL INSTANTLY REGRET IT
         response.headers.set("Content-Type", "image/png")
         
         return response
+    
+    def __str__(self) -> str:
+        inner: BaseItem = self.dict()
+        
+        return f"{inner['category']} {inner['title']} found in {inner['location']} currently stored in box {inner['store']}"
+    
+    def __repr__(self) -> str:
+        return f"{self._item=}"
+    
+    def json(self) -> flask.Response:
+        return flask.jsonify(self.dict())
 
 class ItemHandler:
     def __init__(self, db: database.DB) -> None:
@@ -90,7 +106,7 @@ class ItemHandler:
             raise exceptions.BadDB # Validate input
 
         self._db: database.DB = db
-        self._items: List[BaseItem] = list()
+        self._items: Dict[int, BaseItem] = dict()
 
     def pull(self, id: int) -> None: # Single Item pull by ID
         if not isinstance(id, int):
@@ -104,7 +120,7 @@ class ItemHandler:
         
         i: Item = Item(*fields[0], self._db)
 
-        self._items.append(i)
+        self._items[int(id)] = i
 
     def massPull(self, query: str, *args: List[any]) -> List[int]: # Multiple Item pull by condition
         if not isinstance(query, str):
@@ -116,15 +132,18 @@ class ItemHandler:
         list(map(self.pull, ids)) # Get the full items and add them to the internal items list
         
         return ids
-        
+    
+    def items(self) -> List[Item]:
+        return list(self._items.values())
+    
+    def get(self) -> Dict[int, Dict[str, item_fields]]:
+        return {i: x.dict() for (i, x) in self._items.items()}
+    
     def __str__(self) -> str:
-        return ', '.join(list(map(str, self._items)))
+        return ', '.join(list(map(str, self.items())))
        
     def __repr__(self) -> str:
         return f"{self._items=}"
     
-    def items(self) -> List[Item]:
-        return self._items
-    
-    def json(self, with_image: bool = False) -> flask.Response:
-        return flask.jsonify(list(map(lambda x: x.dict(), self.items()))) # Fix this!!!
+    def json(self) -> flask.Response:
+        return flask.jsonify(self.get())

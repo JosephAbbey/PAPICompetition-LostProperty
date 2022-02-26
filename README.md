@@ -12,7 +12,7 @@ The solution is to create an accessible catalogue-like system which allows easy 
 
 ## The Team
 
-Name     | Github Username |
+Name     | GitHub Username |
 :-------:|:---------------:|
 Joseph A | JosephAbbey     |
 Ben J    | BenjaminJones07 |
@@ -66,14 +66,14 @@ Alex P   |                 |
     - Item expiry (Pseudone) (Done)
         - Get items with entry timestamp before certain timestamp
         - Remove item
-        - Notify manager with approprite message
+        - Notify manager with appropriate message
     - Photo get (Pseudone) (Done)
         - Verify valid ID
         - Return DB BLOB as Photo
 
 - ## Front-end:
     - Catalogue
-    - Catagories
+    - Categories
     - Details
     - Add item
     - Remove item
