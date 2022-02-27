@@ -39,7 +39,7 @@ def item():
     try: handler.pull(id)
     except serverLib.exceptions.InvalidInput: return redirect("/")
     
-    
+    return handler.items()[0].dict()
         
 @app.route("/photo")
 def photoAPI():
