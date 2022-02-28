@@ -4,12 +4,14 @@ export default class CatalogueItem extends HTMLElement {
     constructor() {
         super();
 
+        var data = JSON.parse(this.attributes.data.value);
+
         this.attrs = {
-            colour: this.attributes.colour.value,
-            "found-in": this.attributes["found-in"].value,
-            title: this.attributes.title.value,
-            category: this.attributes.category.value,
-            image: this.attributes.image.value
+            colour: data.colour,
+            "found-in": data.location,
+            title: data.title,
+            category: data.category,
+            image: this.attributes.id.value
         }
     
         const _style = document.createElement('style');

@@ -10,11 +10,8 @@
     <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
         {% for (id, item) in json.items() %}
             <catalogue-item
-                title="{{ item['title'] }}"
-                colour="Navy blue"
-                category="{{ item['category'] }}"
-                found-in="{{ item['location'] }}"
-                image="{{ id }}"
+                id="{{ id }}"
+                data="{{ item }}"
             ></catalogue-item>
         {% endfor %}
     </div>
