@@ -6,17 +6,11 @@ import serverLib.configs as configs
 
 # Base classes, exceptions, and type aliases
 
-
-
-
-
 # Global
 
 database: DB = DB(Connection(configs.DATABASE)) # Global database
 
 # Helper functions
-
-
 
 if __name__ == "__main__":
     """

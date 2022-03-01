@@ -38,6 +38,18 @@ class Item:
     """
     
     def __init__(self, title: int, category: int, image: Optional[bytes], location: int, store: int, db: database.DB) -> None:
+        """
+        The constructor for the Item class.
+
+        Parameters:
+            title (int): The ID of the item's title in the `title` table.
+            category (int): The ID of the item's category in the `category` table.
+            image (bytes | None): The bytes of the item's image.
+            location (int): The ID of the item's location in the `locations` table.
+            store (int): The item's store number
+            db (serverLib.database.DB): The database containing the `title`, `category`, and `location` tables.
+        """
+
         # Promise 1
         if not isinstance(image, (bytes, type(None))):
             raise exceptions.BadItem("Promise 1 was broken")
@@ -59,7 +71,7 @@ class Item:
             raise exceptions.BadItem("Invalid store (Promise 3 was broken)")
 
         self._db: database.DB = db
-        self._item: BaseItem = { # DO NOT TOUCH, DON'T DO IT
+        self._item: BaseItem = {
             "title": title,
             "image": image,
             "category": category,
@@ -68,6 +80,16 @@ class Item:
         }
     
     def lookup(self, table: str) -> str:
+        """
+        The function for converting an ID to its corresponding value.
+
+        Parameters:
+            table (str): The name of the table to search.
+
+        Returns:
+            str: The corresponding value.
+        """
+        
         return self._db.Execute(f"SELECT name FROM {table} WHERE id = ?", self._item[table]).fetchall()[0][0]
     
     def dict(self) -> Dict[str, item_fields]:
@@ -84,7 +106,7 @@ class Item:
         if not (img := self._item.get("image")):
             return None
         
-        response = flask.make_response(img)
+        response: flask.Response = flask.make_response(img)
         response.headers.set("Content-Type", "image/png")
         
         return response

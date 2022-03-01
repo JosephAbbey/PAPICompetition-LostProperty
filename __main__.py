@@ -18,6 +18,7 @@ def index():
     
     try: id: int = int(id)
     except ValueError: id: int = 0
+    except Exception as e: print(type(e), ":", e)
     
     lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
@@ -32,6 +33,7 @@ def item():
     
     try: id: int = int(id)
     except ValueError: return redirect("/")
+    except Exception as e: print(type(e), ":", e)
     
     lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
@@ -47,6 +49,7 @@ def photoAPI():
     
     try: id: int = int(id)
     except ValueError: return "Error 2 (Supplied ID was not a number)"
+    except Exception as e: print(type(e), ":", e)
     
     lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
