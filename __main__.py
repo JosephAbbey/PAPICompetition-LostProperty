@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from serverLib import serverLib
 from sqlite3 import connect
+import adminAuth
 
 app = Flask(__name__)
 
@@ -35,7 +36,9 @@ def item():
     try: handler.pull(id)
     except serverLib.exceptions.InvalidInput: return redirect("/")
     
-    return render_template("item.html", json=handler.items()[0].dict())
+    i: serverLib.items.Item = handler.items()[0]
+
+    return render_template("item.html", title=i.dict()["title"], json=i.json())
         
 @app.route("/photo")
 def photoAPI():

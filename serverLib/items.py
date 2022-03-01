@@ -119,7 +119,7 @@ class Item:
     def __repr__(self) -> str:
         return f"{self._item=}"
     
-    def json(self) -> flask.Response:
+    def json(self) -> str:
         return json.dumps(self.dict())
 
 class ItemHandler:
