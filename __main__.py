@@ -1,16 +1,11 @@
 from flask import Flask, render_template, request, redirect
 from serverLib import serverLib
 from sqlite3 import connect
+import 
 
 app = Flask(__name__)
 
-"""
-@app.route("/")
-@app.route("/static/")
-@app.route("/<a>")
-def index(a = None):
-    return redirect("/static/" + (a or "index.html"))
-"""
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 @app.route("/")
 def index():
@@ -41,7 +36,7 @@ def item():
     try: handler.pull(id)
     except serverLib.exceptions.InvalidInput: return redirect("/")
     
-    return handler.items()[0].dict()
+    return render_template("item.html", json=handler.items()[0].dict())
         
 @app.route("/photo")
 def photoAPI():
