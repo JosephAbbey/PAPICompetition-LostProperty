@@ -1,0 +1,19 @@
+:root, html, body {
+    margin: 0;
+    background-color: #4E515D;
+}
+
+.navbar {
+    background-color: #393948;
+    height: 3rem;
+}
+
+.navbar div {
+    background-color: #5172E7;
+    height: 100%;
+    width: 10rem;
+}
+
+.navbar div img {
+    height: 100%;
+}

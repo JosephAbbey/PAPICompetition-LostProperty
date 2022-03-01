@@ -3,7 +3,7 @@ This module handles the storage of Items as well as methods relating to singular
 """
 
 from typing import Dict, List, Optional, Tuple, TypedDict, Union
-import flask, copy
+import flask, copy, json
 
 from serverLib import configs, database, exceptions
 
@@ -120,7 +120,7 @@ class Item:
         return f"{self._item=}"
     
     def json(self) -> flask.Response:
-        return flask.jsonify(self.dict())
+        return json.dumps(self.dict())
 
 class ItemHandler:
     def __init__(self, db: database.DB) -> None:
@@ -159,7 +159,7 @@ class ItemHandler:
         return list(self._items.values())
     
     def get(self) -> Dict[int, Dict[str, item_fields]]:
-        return {i: x.dict() for (i, x) in self._items.items()}
+        return {i: x.json() for (i, x) in self._items.items()}
     
     def __str__(self) -> str:
         return ', '.join(list(map(str, self.items())))
