@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from serverLib import serverLib
 from sqlite3 import connect
-import 
 
 app = Flask(__name__)
 
