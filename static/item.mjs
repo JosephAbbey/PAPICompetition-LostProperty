@@ -35,14 +35,21 @@ export default class CatalogueItem extends HTMLElement {
             width: fit-content;
             cursor: pointer;
           }
+          span {
+            font-size: 2rem;
+            font-weight: 400;
+          }
         `;
     
         _template.innerHTML = `
           <div>
             <img title="${this.attrs.title}" src="${config.PHOTO_API + this.attrs.image}" />
-            <h1>
+            <span>
               ${this.attrs.title}
-            </h1>
+            </span>
+            ${this.attrs.colour}
+            ${this.attrs.category}
+            ${this.attrs["found-in"]}
           </div>
         `;
 

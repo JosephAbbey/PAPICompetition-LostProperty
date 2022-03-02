@@ -1,3 +1,19 @@
+import os
+import sys
+import pkg_resources
+
+modules = [
+    "flask"
+]
+
+installed = [i.key for i in pkg_resources.working_set]
+
+for name in modules:
+    if name in installed:
+        print(name, "already in pkg_resources.working_set")
+    else:
+        os.system("pip{}.{} install {}".format(sys.version_info.major, sys.version_info.minor, name))
+
 from flask import Flask, render_template, request, redirect
 from serverLib import serverLib
 from sqlite3 import connect
