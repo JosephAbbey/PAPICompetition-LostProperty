@@ -25,6 +25,7 @@ class DB:
         """
         
         self.db: sqlite3.Connection = database
+        self.db.row_factory = sqlite3.Row
         self.cursor: sqlite3.Cursor = self.db.cursor()
     
     def Execute(self, query: str, *args: List[Any]) -> sqlite3.Cursor:
@@ -67,16 +68,6 @@ class DBConfig:
         
         if not (isinstance(table, str) and isinstance(value, str)): raise exceptions.InvalidInput
         self._db.Execute(f"INSERT OR IGNORE INTO {table} VALUES (?)", value)
-        
-    def addCategory(self, category: str) -> None:
-        """
-        The method to add a category to the database's `category` table.
-        
-        Parameters:
-            category (str): The category to add.
-        """
-        
-        self.__internalAdd("category", category)
         
     def addLocation(self, location: str) -> None:
         """
