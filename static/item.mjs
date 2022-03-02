@@ -20,36 +20,53 @@ export default class CatalogueItem extends HTMLElement {
     
         _style.innerHTML = `
           img {
-            width: 6rem;
-            height: 6rem;
+            width: 8rem;
+            height: 8rem;
             display: inline-block;
             border-radius: 0.625rem;
+            object-fit: cover;
           }
-          div {
+          .wrapper {
             display: grid;
-            grid-template-columns: 6.5rem 12rem;
+            grid-template-columns: 8.5rem 12rem;
             padding: 1rem;
             margin: 0.5rem;
             border-radius: 1rem;
             border: 1px solid #000;
             width: fit-content;
             cursor: pointer;
+            color: white;
           }
           span {
             font-size: 2rem;
             font-weight: 400;
+            display: block;
+          }
+          .icon {
+            height: 1rem;
+            width: auto;
+            border-radius: 0;
+          }
+          .colour {
+            width: 1rem;
+            height: 1rem;
+            background-color: attr(colour);
           }
         `;
     
         _template.innerHTML = `
-          <div>
-            <img title="${this.attrs.title}" src="${config.PHOTO_API + this.attrs.image}" />
-            <span>
-              ${this.attrs.title}
-            </span>
-            ${this.attrs.colour}
-            ${this.attrs.category}
-            ${this.attrs["found-in"]}
+          <div class="wrapper">
+            <div>
+              <img title="${this.attrs.title}" src="${config.PHOTO_API + this.attrs.image}" />
+            </div>
+            <div>
+              <span>
+                ${this.attrs.title}
+              </span>
+              <div colour="${this.attrs.colour}"></div> ${this.attrs.colour}                   <br />
+              <img class="icon" src="/static/icons/${this.attrs.category}.svg"></img> ${this.attrs.category}     <br />
+              <img class="icon" src="/static/icons/door.svg"></img> ${this.attrs["found-in"]}  <br />
+            </div>
           </div>
         `;
 
