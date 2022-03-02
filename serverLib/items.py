@@ -12,7 +12,7 @@ from serverLib import configs, database, exceptions
 class BaseItem(TypedDict):
     title: int
     category: int
-    image: bytes
+    image: Optional[bytes]
     location: int
     store: int
 
@@ -37,7 +37,7 @@ class Item:
         _item (serverLib.items.BaseItem): The dictionary holding all necessary details about the Item.
     """
     
-    def __init__(self, title: int, category: int, image: Optional[bytes], location: int, store: int, db: database.DB) -> None:
+    def __init__(self, fields: BaseItem, db: database.DB) -> None:
         """
         The constructor for the Item class.
 
@@ -51,10 +51,10 @@ class Item:
         """
 
         # Promise 1
-        if not isinstance(image, (bytes, type(None))):
+        if not isinstance(fields["image"], (bytes, type(None))):
             raise exceptions.BadItem("Promise 1 was broken")
         
-        for v in [title, category, location, store]:
+        for v in [fields[x] for x in ["title", "category", "location", "store"]]:
             if not isinstance(v, int):
                 raise exceptions.BadItem("Promise 1 was broken")
         
@@ -62,22 +62,16 @@ class Item:
             raise exceptions.BadItem("Promise 1 was broken")
 
         # Promises 2
-        for (table, value) in {"title": title, "category": category, "location": location}.items():
+        for (table, value) in {"title": fields["title"], "category": fields["category"], "location": fields["location"]}.items():
             if len(db.Execute(f"SELECT id FROM {table} WHERE id = ?", value).fetchall()) != 1:
                 raise exceptions.BadItem(f"Invalid {table} (Promise 2 was broken)")
 
         # Promise 3
-        if store > configs.MAX_STORE:
+        if fields["store"] > configs.MAX_STORE:
             raise exceptions.BadItem("Invalid store (Promise 3 was broken)")
 
         self._db: database.DB = db
-        self._item: BaseItem = {
-            "title": title,
-            "image": image,
-            "category": category,
-            "location": location,
-            "store": store
-        }
+        self._item: BaseItem = fields
     
     def lookup(self, table: str) -> str:
         """
@@ -98,6 +92,7 @@ class Item:
         
         inner["title"] = self.lookup("title")
         inner["category"] = self.lookup("category")
+        inner["colour"] = self.lookup("colour")
         inner["location"] = self.lookup("location")
         
         return inner
@@ -114,7 +109,7 @@ class Item:
     def __str__(self) -> str:
         inner: BaseItem = self.dict()
         
-        return f"{inner['category']} {inner['title']} found in {inner['location']} currently stored in box {inner['store']}"
+        return f"{inner['category']} {inner['title']} of colour {inner['colour']} found in {inner['location']} currently stored in box {inner['store']}"
     
     def __repr__(self) -> str:
         return f"{self._item=}"
@@ -134,13 +129,13 @@ class ItemHandler:
         if not isinstance(id, int):
             raise exceptions.InvalidInput # Validate input
 
-        query: str = "SELECT title, category, image, location, store FROM items WHERE id = ?"
-        fields: List[item_fields] = self._db.Execute(query, id).fetchall()
+        query: str = "SELECT title, category, colour, image, location, store FROM items WHERE id = ?"
+        fields: BaseItem = dict(self._db.Execute(query, id).fetchall()[0])
         
         if not fields:
             raise exceptions.InvalidInput("Bad ID")
         
-        i: Item = Item(*fields[0], self._db)
+        i: Item = Item(fields, self._db)
 
         self._items[int(id)] = i
 
@@ -167,5 +162,5 @@ class ItemHandler:
     def __repr__(self) -> str:
         return f"{self._items=}"
     
-    def json(self) -> flask.Response:
-        return flask.jsonify(self.get())
+    def json(self) -> str:
+        return json.dumps(self.get())
