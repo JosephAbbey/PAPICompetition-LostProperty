@@ -20,15 +20,15 @@ export default class CatalogueItem extends HTMLElement {
     
         _style.innerHTML = `
           img {
-            width: 8rem;
-            height: 8rem;
+            width: 7rem;
+            height: 7rem;
             display: inline-block;
             border-radius: 0.625rem;
             object-fit: cover;
           }
           .wrapper {
             display: grid;
-            grid-template-columns: 8.5rem 12rem;
+            grid-template-columns: 7.5rem 12rem;
             padding: 1rem;
             margin: 0.5rem;
             border-radius: 1rem;
@@ -50,7 +50,9 @@ export default class CatalogueItem extends HTMLElement {
           .colour {
             width: 1rem;
             height: 1rem;
-            background-color: attr(colour);
+            background-color: ${this.attrs.colour};
+            border-radius: 20%;
+            display: inline-block;
           }
         `;
     
@@ -63,7 +65,7 @@ export default class CatalogueItem extends HTMLElement {
               <span>
                 ${this.attrs.title}
               </span>
-              <div colour="${this.attrs.colour}"></div> ${this.attrs.colour}                   <br />
+              <div class="colour"></div> ${this.attrs.colour}                   <br />
               <img class="icon" src="/static/icons/${this.attrs.category}.svg"></img> ${this.attrs.category}     <br />
               <img class="icon" src="/static/icons/door.svg"></img> ${this.attrs["found-in"]}  <br />
             </div>
