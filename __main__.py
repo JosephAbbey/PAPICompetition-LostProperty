@@ -33,8 +33,8 @@ def index():
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
     
     handler.massPull(f"1=1 LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {id * serverLib.configs.PAGE_SIZE}")
-    
-    return render_template("index.html", json=handler.get())
+
+    return render_template("index.html", json=handler.get(), categories=["Uniform", "Tech", "PE"])
 
 @app.route("/item")
 def item():
