@@ -9,12 +9,10 @@ modules = [
 installed = [i.key for i in pkg_resources.working_set]
 
 for name in modules:
-    if name in installed:
-        print(name, "already in pkg_resources.working_set")
-    else:
-        os.system("pip{}.{} install {}".format(sys.version_info.major, sys.version_info.minor, name))
+    if name in installed: print(name, "already in pkg_resources.working_set")
+    else: os.system("pip{}.{} install {}".format(sys.version_info.major, sys.version_info.minor, name))
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash, session
 from serverLib import serverLib
 from sqlite3 import connect
 import adminAuth
@@ -73,6 +71,26 @@ def photoAPI():
     if not (r := handler.items()[0].image()): return "No image"
     
     return r
+
+@app.route("/login", methods=["GET", "POST"])
+def loginAPI():
+    if request.method == "GET": # GET request
+        return render_template("login.html")
+    
+    # POST request
+
+    if not (pw := request.form.get("pw")):
+        flash("Please enter a password")
+        return redirect("/login")
+
+    result: bool = adminAuth.login(pw)
+
+    if not result:
+        flash("Password was incorrect")
+        return redirect("/login")
+
+    
+
 
 if __name__ == "__main__":
     app.run()

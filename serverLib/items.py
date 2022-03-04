@@ -12,6 +12,7 @@ from serverLib import configs, database, exceptions
 class BaseItem(TypedDict):
     title: int
     category: int
+    colour: int
     image: Optional[bytes]
     location: int
     store: int

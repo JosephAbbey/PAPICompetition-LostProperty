@@ -1,4 +1,4 @@
-from typing import Set, Union
+from typing import Set, Union, Optional
 from serverLib import serverLib
 import hashlib
 
@@ -11,13 +11,23 @@ nums: str = ''.join([str(x) for x in range(10)])
 def intersectionCheck(pwSet: Set[chr], check: Union[Set[chr], str]) -> bool:
     return not pwSet.intersection(check)
 
-def strength(pw: str) -> Union[bool, str]:
-    pw_asSet = set(pw)
+def strength(pw: str) -> Optional[str]:
+    """
+    The function to verify a password's strength.
+
+    Parameters:
+        pw (str): The password to check.
+
+    Returns:
+        Optional[str]: A str on faliure, None on success
+    """
+
+    pw_asSet: set[chr] = set(pw)
     if len(pw) < 8: return "Password needs at least 8 characters"
     if intersectionCheck(pw_asSet, upper): return "Password needs at least 1 uppercase letter"
     if intersectionCheck(pw_asSet, nums): return "Password needs at least 1 number"
     if intersectionCheck(pw_asSet, SYMBOLS): return "Password needs at least 1 symbol"
-    return True
+    return
 
 def login(password: str) -> bool:
     """
@@ -41,7 +51,7 @@ def login(password: str) -> bool:
     
     return False
 
-def update(new: str) -> Union[bool, str]:
+def update(new: str) -> Optional[str]:
     """
     The function to update the stored password hash.
 
@@ -49,7 +59,7 @@ def update(new: str) -> Union[bool, str]:
         new (str): The password to replace the old one with.
 
     Returns:
-        bool: True if password was valid.
+        Optional[bool]: A str on faliure, None on success.
     """
     if not (msg := strength(new)):
         return msg
@@ -57,4 +67,4 @@ def update(new: str) -> Union[bool, str]:
     with open(f"{serverLib.configs.DATA_FOLDER}/admin_hash.hash", "w") as f:
         f.write(hashlib.sha256(new).hexdigest())
 
-    return True
+    return
