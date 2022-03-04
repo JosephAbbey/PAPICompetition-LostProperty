@@ -8,12 +8,13 @@
 </head>
 <body>
     <script type="module" src="/static/index.mjs"></script>
-    <div class="navbar"><div><img src="/static/logo.png" alt="logo"></img><span>LostProperty</span></div></div>
+    <nav-top></nav-top>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
         {% for (id, item) in json.items() %}
             <catalogue-item
                 id="{{ id }}"
                 data="{{ item }}"
+                in-list="1"
             ></catalogue-item>
         {% endfor %}
     </div>

@@ -54,7 +54,7 @@ def item():
     
     i: serverLib.items.Item = handler.items()[0]
 
-    return render_template("item.html", title=i.dict()["title"], json=i.json())
+    return render_template("item.html", id=id, title=i.dict()["title"], json=i.json())
         
 @app.route("/photo")
 def photoAPI():
