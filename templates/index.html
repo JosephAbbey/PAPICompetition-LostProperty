@@ -9,6 +9,12 @@
 <body>
     <script type="module" src="/static/index.mjs"></script>
     <nav-top></nav-top>
+    <div class="categories">
+        <catalogue-category category="All" id="All"></catalogue-category>
+        {% for category in categories %}
+            <catalogue-category category="{{ category }}" id="{{ category }}"></catalogue-category>
+        {% endfor %}
+    </div>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
         {% for (id, item) in json.items() %}
             <catalogue-item
