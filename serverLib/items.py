@@ -98,13 +98,23 @@ class Item:
         
         return inner
     
-    def image(self) -> Optional[flask.Response]: # Generate a flask response containing the image
+    def image(self, default: bytes = configs.BASE_IMAGE) -> flask.Response:
+        """
+        The function for getting an item's image or a default image.
+
+        Parameters:
+            default (bytes) = serverLib.configs.BASE_IMAGE: The image to return on a None value for image.
+
+        Returns:
+            flask.Response: The formatted flask image response.
+        """
+
         if not (img := self._item.get("image")):
-            return None
-        
+            img: bytes = default
+
         response: flask.Response = flask.make_response(img)
         response.headers.set("Content-Type", "image/png")
-        
+
         return response
     
     def __str__(self) -> str:

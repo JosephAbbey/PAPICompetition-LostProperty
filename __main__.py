@@ -68,9 +68,9 @@ def photoAPI():
     try: handler.pull(id)
     except serverLib.exceptions.InvalidInput: return "Error 3 (Supplied ID was not a valid Item)"
     
-    if not (r := handler.items()[0].image()): return "No image"
-    
-    return r
+    print(handler.items()[0].image().content_type)
+
+    return handler.items()[0].image()
 
 @app.route("/login", methods=["GET", "POST"])
 def loginAPI():
