@@ -15,7 +15,7 @@
             <catalogue-category category="{{ category }}" id="{{ category }}"></catalogue-category>
         {% endfor %}
     </div>
-    <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+    <div class="items">
         {% for (id, item) in json.items() %}
             <catalogue-item
                 id="{{ id }}"
@@ -24,5 +24,6 @@
             ></catalogue-item>
         {% endfor %}
     </div>
+    <catalogue-pagination current="{{ page[0] }}" final="{{ page[1] }}"></catalogue-pagination>
 </body>
 </html>

@@ -34,7 +34,7 @@ def index():
     
     handler.massPull(f"1=1 LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {id * serverLib.configs.PAGE_SIZE}")
 
-    return render_template("index.html", json=handler.get(), categories=["Uniform", "Tech", "PE"])
+    return render_template("index.html", json=handler.get(), categories=["Uniform", "Tech", "PE"], page=[1, 3])
 
 @app.route("/item")
 def item():
