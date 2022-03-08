@@ -23,7 +23,7 @@ def push(item: items.Item, db: database.DB) -> None:
     keys: List[str] = list(i.keys()) # Column names
     values: List[items.item_fields] = list(i.values()) # Values for those columns
 
-    query: str = f"INSERT INTO items ({', '.join(keys)}) VALUES (?, {' ?,' * (len(keys) - 1)})" # Insert values query
+    query: str = f"INSERT INTO items ({', '.join(keys)}) VALUES (?{', ?' * (len(keys) - 1)})" # Insert values query
     return db.Execute(query, *values).fetchall()
 
 def addItem(item: items.Item, db: database.DB) -> None: 
