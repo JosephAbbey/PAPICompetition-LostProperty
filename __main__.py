@@ -25,11 +25,14 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 Session(app)
 
+max = lambda x, y: x if x >= y else y
+
 @app.route("/")
 def index():
     id: str = request.args.get("page", "1")
     
-    try: id: int = max(int(id), 1)
+    try:
+        id: int = int(id) if int(id) >= 1 else 1
     except ValueError: id: int = 1
     except Exception as e: print(type(e), ":", e)
     
