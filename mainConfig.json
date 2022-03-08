@@ -1,0 +1,7 @@
+{
+    "max_store": 5,
+    "page_size": 10,
+    "data_folder": "data",
+    "expiry_time_ms": 604800000,
+    "notify_time_ms": 1814400000
+}

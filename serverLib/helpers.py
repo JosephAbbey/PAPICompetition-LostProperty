@@ -19,7 +19,7 @@ class Notify:
         pass
 
 def push(item: items.Item, db: database.DB) -> None:
-    i = item.dict()
+    i = item.rawdict()
     keys: List[str] = list(i.keys()) # Column names
     values: List[items.item_fields] = list(i.values()) # Values for those columns
 

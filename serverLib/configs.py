@@ -2,13 +2,18 @@
 This file contains the details for the customizable aspects of the serverLib library.
 """
 
+from io import TextIOWrapper
+from typing import Union
 import datetime
 import json
 
-MAX_STORE: int = 5 # Number of store boxes
-PAGE_SIZE: int = 10 # Items per catalogue page
+CONFIG_FILE: TextIOWrapper = open("mainConfig.json")
+CONFIG_JSON: dict[str, Union[str, int]] = json.load(CONFIG_FILE)
 
-DATA_FOLDER: str = "data"
+MAX_STORE: int = CONFIG_JSON["max_store"] # Number of store boxes
+PAGE_SIZE: int = CONFIG_JSON["page_size"] # Items per catalogue page
+
+DATA_FOLDER: str = CONFIG_JSON["data_folder"]
 DATABASE: str = f"{DATA_FOLDER}/lostProperty.db" # Database file
 NOTIFY: str = f"{DATA_FOLDER}/notifSave.json" # Savefile (JSON)
 
@@ -16,5 +21,5 @@ BASE_IMAGE_FILE: str = f"{DATA_FOLDER}/defImage.png"
 with open(BASE_IMAGE_FILE, "rb") as img:
     BASE_IMAGE: bytes = img.read()
 
-EXPIRY_TIME: datetime.timedelta = datetime.timedelta(hours=3) # Time until item expires
-NOTIFY_TIME: datetime.timedelta = datetime.timedelta(weeks=3) # How often to notify
+EXPIRY_TIME: datetime.timedelta = datetime.timedelta(milliseconds=CONFIG_JSON["expiry_time_ms"]) # Time until item expires
+NOTIFY_TIME: datetime.timedelta = datetime.timedelta(milliseconds=CONFIG_JSON["notify_time_ms"]) # How often to notify

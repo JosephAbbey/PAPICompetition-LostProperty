@@ -87,6 +87,9 @@ class Item:
         
         return self._db.Execute(f"SELECT name FROM {table} WHERE id = ?", self._item[table]).fetchall()[0][0]
     
+    def rawdict(self) -> BaseItem:
+        return copy.deepcopy(self._item)
+
     def dict(self) -> Dict[str, item_fields]:
         inner: BaseItem = copy.deepcopy(self._item)
         inner.pop("image", None)
