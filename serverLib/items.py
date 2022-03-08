@@ -116,7 +116,7 @@ class Item:
             img: bytes = default
 
         response: flask.Response = flask.make_response(img)
-        response.headers.set("Content-Type", "image/png")
+        response.headers.set("Content-Type", "image/*")
 
         return response
     
