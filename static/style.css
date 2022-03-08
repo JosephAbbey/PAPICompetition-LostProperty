@@ -21,6 +21,12 @@ a img {
     margin: auto;
 }
 
+.items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
 .categories {
     display: flex;
     flex-wrap: nowrap;

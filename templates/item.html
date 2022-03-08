@@ -13,6 +13,6 @@
         id="{{ id }}"
         data="{{ json }}"
     ></catalogue-item>
-    <a href="./request?id={{ id }}"><img style="height: 1em;" src="./static/icons/request.svg"></img> Request Item</a>
+    <a href="mailto:lostproperty@example.com?subject=Item%20Request&body=I%20would%20like%20to%20request%20item%20{{ json.title }}%20({{ id }})"><img style="height: 1em;" src="./static/icons/request.svg"></img> Request Item</a>
 </body>
 </html>
