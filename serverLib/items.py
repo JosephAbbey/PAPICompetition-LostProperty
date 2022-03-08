@@ -91,7 +91,7 @@ class Item:
         return copy.deepcopy(self._item)
 
     def dict(self) -> Dict[str, item_fields]:
-        inner: BaseItem = copy.deepcopy(self._item)
+        inner: BaseItem = self.rawdict()
         inner.pop("image", None)
         
         inner["title"] = self.lookup("title")
