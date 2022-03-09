@@ -1,30 +1,24 @@
-import * as config from "./config.mjs";
+import * as config from './config.mjs';
+import setURLParameter from './setURLParameter.mjs';
 
 export default class CatalogueCategory extends HTMLElement {
     constructor() {
         super();
 
         this.attrs = {
-            category: this.attributes.category.value
-        }
-    
+            category: this.attributes.category.value,
+        };
+
         this._style = document.createElement('style');
         const _template = document.createElement('template');
-    
+
         this.refreshStyle();
-    
+
         _template.innerHTML = `
             <div id="${this.attrs.category}" class="wrapper">${this.attrs.category}</div>
         `;
-            
-        this.onclick = () => {
-            var oldhash = window.location.hash
-            window.location = `#${this.attrs.category}`
-            document.querySelectorAll("catalogue-item").forEach(a => a.refreshStyle());
-            if (oldhash) document.querySelectorAll(oldhash).forEach(a => a.refreshStyle());
-            this.refreshStyle();
-        };
-        
+
+        this.onclick = () => setURLParameter('category', this.attrs.category);
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(this._style);
         this.shadowRoot.appendChild(_template.content.cloneNode(true));
@@ -42,9 +36,16 @@ export default class CatalogueCategory extends HTMLElement {
                 min-width: 5em;
                 text-align: center;
                 cursor: pointer;
-                ${((this.attrs.category == "All" && !Boolean(window.location.hash)) || window.location.hash.substring(1) == this.attrs.category) ? `
+                ${
+                    (this.attrs.category == 'All' &&
+                        config.url.searchParams.get('category') == null) ||
+                    config.url.searchParams.get('category') ==
+                        this.attrs.category
+                        ? `
                     background-color: #000;
-                ` : '' }
+                `
+                        : ''
+                }
             }
         `;
     }

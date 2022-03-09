@@ -1,7 +1,6 @@
 import os
 import sys
 import pkg_resources
-from serverLib.configs import PAGE_SIZE
 
 modules = [
     "flask",
@@ -9,14 +8,21 @@ modules = [
 ]
 
 installed = [i.key for i in pkg_resources.working_set]
-
-[os.system("pip{}.{} install {}".format(sys.version_info.major, sys.version_info.minor, name)) for name in modules if name not in installed]
+[
+    os.system(
+        "pip{}.{} install {}".format(
+            sys.version_info.major, 
+            sys.version_info.minor, name
+        )
+    ) for name in modules if name not in installed
+]
 
 from flask import Flask, render_template, request, redirect, flash, session
 from flask_session import Session
 from serverLib import serverLib
 import adminAuth
 import sqlite3
+from serverLib.configs import PAGE_SIZE
 
 app = Flask(__name__)
 
@@ -30,19 +36,22 @@ Session(app)
 def index():
     id: str = request.args.get("page", "1")
     categ: str = request.args.get("category", "1=1")
+
+    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
     
     try: id: int = max(int(id), 1) # Verify user input is valid, set to max if not
     #except ValueError: id: int = 1 # If input is not int, set id to 1 (First page)
     except Exception as e: return f"{type(e)} : {e}", 500 # General error case
 
     if not categ in [*serverLib.configs.CATEGORIES, "1=1"]: categ = "1=1" # Sanitise user input
-    
-    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
-    handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
+    else: categ = f"category={serverLib.configs.CATEGORIES.index(categ) + 1}"
 
-    max_id: int = -1 * (-list(lDB.Execute("SELECT COUNT(1) FROM items").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE)
+    max_id: int = -1 * (-list(lDB.Execute(f"SELECT COUNT(1) FROM items WHERE {categ}").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE)
     
-    handler.massPull(f"{categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
+    if id > max_id: id = max_id # If id is greater than max_id, set id to max_id
+
+    handler.massPull(f"{categ} LIMIT {PAGE_SIZE} OFFSET {(id - 1) * PAGE_SIZE}")
 
     return render_template("index.html", json=handler.get(), categories=serverLib.configs.CATEGORIES, page=id, max=max_id)
 
