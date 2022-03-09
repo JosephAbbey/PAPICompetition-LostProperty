@@ -99,11 +99,7 @@ export default class CataloguePagination extends HTMLElement {
                 </button>
                 <button>${this.attrs.current}</button>
                 <button
-                    ${
-                        this.attrs.current < this.attrs.final - 1
-                            ? ''
-                            : 'disabled'
-                    }
+                    ${this.attrs.current < this.attrs.final ? '' : 'disabled'}
                     onclick="CataloguePagination.setURLParameter('page', 
                         '${this.attrs.current + 1}'
                     )"

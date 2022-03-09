@@ -30,7 +30,6 @@ export default class CatalogueCategory extends HTMLElement {
                 display: inline-block;
                 padding: 0.25em;
                 margin-left: 0.25em;
-                margin-bottom: 0.25em;
                 border-radius: 0.5em;
                 border: 1px solid #000;
                 min-width: 5em;
