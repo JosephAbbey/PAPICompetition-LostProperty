@@ -25,25 +25,22 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 Session(app)
 
-max = lambda x, y: x if x >= y else y
-
 @app.route("/")
 def index():
     id: str = request.args.get("page", "1")
     
-    try:
-        id: int = int(id) if int(id) >= 1 else 1
+    try: id: int = max(int(id), 1)
     except ValueError: id: int = 1
     except Exception as e: print(type(e), ":", e)
     
     lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
 
-    max: int = -1 * (-len(lDB.Execute("SELECT COUNT(1) FROM items").fetchall()) // serverLib.configs.PAGE_SIZE)
+    max_id: int = -1 * (-len(lDB.Execute("SELECT COUNT(1) FROM items").fetchall()) // serverLib.configs.PAGE_SIZE)
     
     handler.massPull(f"1=1 LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
 
-    return render_template("index.html", json=handler.get(), categories=["Uniform", "Tech", "PE"], page=id, max=max)
+    return render_template("index.html", json=handler.get(), categories=["Uniform", "Tech", "PE"], page=id, max=max_id)
 
 @app.route("/item")
 def item():
