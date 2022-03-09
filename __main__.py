@@ -1,6 +1,7 @@
 import os
 import sys
 import pkg_resources
+from serverLib.configs import PAGE_SIZE
 
 modules = [
     "flask",
@@ -14,8 +15,8 @@ installed = [i.key for i in pkg_resources.working_set]
 from flask import Flask, render_template, request, redirect, flash, session
 from flask_session import Session
 from serverLib import serverLib
-from sqlite3 import connect
 import adminAuth
+import sqlite3
 
 app = Flask(__name__)
 
@@ -28,19 +29,22 @@ Session(app)
 @app.route("/")
 def index():
     id: str = request.args.get("page", "1")
+    categ: str = request.args.get("category", "1=1")
     
-    try: id: int = max(int(id), 1)
-    except ValueError: id: int = 1
-    except Exception as e: print(type(e), ":", e)
+    try: id: int = max(int(id), 1) # Verify user input is valid, set to max if not
+    #except ValueError: id: int = 1 # If input is not int, set id to 1 (First page)
+    except Exception as e: return f"{type(e)} : {e}", 500 # General error case
+
+    if not categ in [*serverLib.configs.CATEGORIES, "1=1"]: categ = "1=1" # Sanitise user input
     
-    lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
+    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
 
-    max_id: int = -1 * (-len(lDB.Execute("SELECT COUNT(1) FROM items").fetchall()) // serverLib.configs.PAGE_SIZE)
+    max_id: int = -1 * (-list(lDB.Execute("SELECT COUNT(1) FROM items").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE)
     
-    handler.massPull(f"1=1 LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
+    handler.massPull(f"{categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
 
-    return render_template("index.html", json=handler.get(), categories=["Uniform", "Tech", "PE"], page=id, max=max_id)
+    return render_template("index.html", json=handler.get(), categories=serverLib.configs.CATEGORIES, page=id, max=max_id)
 
 @app.route("/item")
 def item():
@@ -50,7 +54,7 @@ def item():
     except ValueError: return redirect("/")
     except Exception as e: print(type(e), ":", e)
     
-    lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
+    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
     
     try: handler.pull(id)
@@ -58,21 +62,21 @@ def item():
     
     i: serverLib.items.Item = handler.items()[0]
 
-    return render_template("item.html", id=id, title=i.dict()["title"], json=i.json())
+    return render_template("item.html", id=id, title=i.lookup("title"), json=i.json())
         
 @app.route("/photo")
 def photoAPI():
-    if not (id := request.args.get("id")): return "Error 1 (No ID supplied)"
+    if not (id := request.args.get("id")): return "Error 1 (No ID supplied)", 400
     
     try: id: int = int(id)
-    except ValueError: return "Error 2 (Supplied ID was not a number)"
+    except ValueError: return "Error 2 (Supplied ID was not a number)", 400
     except Exception as e: print(type(e), ":", e)
     
-    lDB: serverLib.database.DB = serverLib.database.DB(connect(serverLib.configs.DATABASE))
+    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
     
     try: handler.pull(id)
-    except serverLib.exceptions.InvalidInput: return "Error 3 (Supplied ID was not a valid Item)"
+    except serverLib.exceptions.InvalidInput: return "Error 3 (Supplied ID was not a valid Item)", 418
     
     print(handler.items()[0].image().content_type)
 
@@ -107,6 +111,8 @@ def admin():
 
     if request.method == "GET":
         return render_template("admin.html")
+
+    
 
 if __name__ == "__main__":
     app.run()
