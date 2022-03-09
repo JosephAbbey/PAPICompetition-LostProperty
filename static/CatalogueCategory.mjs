@@ -15,7 +15,14 @@ export default class CatalogueCategory extends HTMLElement {
         this.refreshStyle();
 
         _template.innerHTML = `
-            <div id="${this.attrs.category}" class="wrapper">${this.attrs.category}</div>
+            <div id="${this.attrs.category}" class="wrapper">
+                ${
+                    this.attrs.category != 'Other'
+                        ? `<img class="icon" alt="icon" src="/static/icons/${this.attrs.category}.svg"></img>`
+                        : ''
+                }
+                ${this.attrs.category}
+            </div>
         `;
 
         this.onclick = () => setURLParameter('category', this.attrs.category);
@@ -28,11 +35,11 @@ export default class CatalogueCategory extends HTMLElement {
         this._style.innerHTML = `
             .wrapper {
                 display: inline-block;
-                padding: 0.25em;
+                padding: 0.25em 1em;
                 margin-left: 0.25em;
                 border-radius: 0.5em;
                 border: 1px solid #000;
-                min-width: 5em;
+                min-width: 4em;
                 text-align: center;
                 cursor: pointer;
                 ${
@@ -45,6 +52,11 @@ export default class CatalogueCategory extends HTMLElement {
                 `
                         : ''
                 }
+            }
+            .icon {
+                height: 1em;
+                width: auto;
+                border-radius: 0;
             }
         `;
     }

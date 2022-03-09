@@ -31,14 +31,10 @@ a img {
     justify-content: center;
 }
 
-.categories {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding: 0.5rem;
-    position: sticky;
+nav-top {
+    position: fixed;
     top: 0;
-    background-color: #393948;
+    width: 100%;
 }
 
 catalogue-pagination {
