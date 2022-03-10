@@ -18,7 +18,22 @@ class Notify:
     def notify(self, l: List[items.Item]) -> None:
         pass
 
-def push(item: items.Item, db: database.DB) -> None:
+def ignoredown(value: str, table: str, db: database.DB) -> int:
+    """
+    The opposite of the serverLib.items.Item.lookup method.
+
+    Parameters:
+        value (str): The value to get the id for
+        table (str): The table to search in
+        db (serverLib.database.DB): The database to search in
+
+    Returns:
+        int: The corresponding id
+    """
+
+    return db.Execute(f"SELECT id FROM {table} WHERE name = ?", value).fetchall()[0][0]
+
+def push(item: items.Item, db: database.DB) -> None: # MAKE THIS AN ITEM METHOD
     i = item.rawdict()
     keys: List[str] = list(i.keys()) # Column names
     values: List[items.item_fields] = list(i.values()) # Values for those columns

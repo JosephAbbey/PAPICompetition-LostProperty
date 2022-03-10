@@ -29,22 +29,24 @@ Session(app)
 @app.route("/")
 def index():
     id: str = request.args.get("page", "1")
-    categ: str = request.args.get("category", "1=1")
+    categ: str = request.args.get("category")
     
     try: id: int = max(int(id), 1) # Verify user input is valid, set to max if not
-    #except ValueError: id: int = 1 # If input is not int, set id to 1 (First page)
+    except ValueError: id: int = 1 # If input is not int, set id to 1 (First page)
     except Exception as e: return f"{type(e)} : {e}", 500 # General error case
-
-    if not categ in [*serverLib.configs.CATEGORIES, "1=1"]: categ = "1=1" # Sanitise user input
     
-    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
-    handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
+    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE)) # Initialise a thread-local database
+    handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Create an item handler
 
-    max_id: int = -1 * (-list(lDB.Execute("SELECT COUNT(1) FROM items").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE)
-    
-    handler.massPull(f"{categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
+    # Sanitise and format user input
+    if not categ in serverLib.configs.CATEGORIES: categ: str = "1=1"
+    else: categ: int = serverLib.helpers.ignoredown(categ, "category", lDB)
 
-    return render_template("index.html", json=handler.get(), categories=serverLib.configs.CATEGORIES, page=id, max=max_id)
+    max_id: int = -1 * (-list(lDB.Execute("SELECT COUNT(1) FROM items").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE) # Generate the max page number
+
+    handler.massPull(f"category = {categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}") # Get relevant items
+
+    return render_template("index.html", json=handler.get(), categories=serverLib.configs.CATEGORIES, page=id, max=max_id) # Render index template
 
 @app.route("/item")
 def item():
