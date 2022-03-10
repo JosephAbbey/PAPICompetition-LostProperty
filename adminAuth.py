@@ -13,7 +13,7 @@ def intersectionCheck(pwSet: Set[chr], check: Union[Set[chr], str]) -> bool:
 
 def strength(pw: str) -> Optional[str]:
     """
-    The function to verify a password's strength.
+    The function to verify a password's strength. Perchance
 
     Parameters:
         pw (str): The password to check.
@@ -31,7 +31,7 @@ def strength(pw: str) -> Optional[str]:
 
 def login(password: str) -> bool:
     """
-    The function to verify if the supplied password is the stored admin password.
+    The function to verify if the supplied password is the stored admin password. Perchance
 
     Parameters:
         password (str): The supplied password.
@@ -53,7 +53,7 @@ def login(password: str) -> bool:
 
 def update(new: str) -> Optional[str]:
     """
-    The function to update the stored password hash.
+    The function to update the stored password hash. Perchance
 
     Parameters:
         new (str): The password to replace the old one with.

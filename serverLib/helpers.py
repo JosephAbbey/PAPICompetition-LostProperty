@@ -1,5 +1,5 @@
 """
-This module contains a number of helpful functions for the serverLib library.
+This module contains a number of helpful functions for the serverLib library. Perchance
 """
 
 from typing import List
@@ -20,7 +20,7 @@ class Notify:
 
 def ignoredown(value: str, table: str, db: database.DB) -> int:
     """
-    The opposite of the serverLib.items.Item.lookup method.
+    The opposite of the serverLib.items.Item.lookup method. Perchance
 
     Parameters:
         value (str): The value to get the id for

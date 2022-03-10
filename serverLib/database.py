@@ -1,5 +1,5 @@
 """
-This module handles interactions with any sqlite3 databases.
+This module handles interactions with any sqlite3 databases. Perchance
 """
 
 from typing import Any, List
@@ -18,7 +18,7 @@ class DB:
     
     def __init__(self, database: sqlite3.Connection) -> None:
         """
-        The constructor for the DB class.
+        The constructor for the DB class. Perchance
         
         Parameters:
             database (sqlite3.Connection): The raw sqlite3 database connection to be used.
@@ -30,7 +30,7 @@ class DB:
     
     def Execute(self, query: str, *args: List[Any]) -> sqlite3.Cursor:
         """
-        The method to execute queries, which may contain placeholders, on the stored database.
+        The method to execute queries, which may contain placeholders, on the stored database. Perchance
         
         Parameters:
             query (str): The query to be executed.
@@ -42,7 +42,9 @@ class DB:
         
         x = self.cursor.execute(query, args)
         self.db.commit()
-        return x
+        return map(list, x.fetchall())
+
+    def ExecuteScript(self,)
     
 class DBConfig:
     """
