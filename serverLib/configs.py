@@ -3,12 +3,12 @@ This file contains the details for the customizable aspects of the serverLib lib
 """
 
 from io import TextIOWrapper
-from typing import List, Union
+from typing import Dict, List, Union
 import datetime
 import json
 
 CONFIG_FILE: TextIOWrapper = open("mainConfig.json")
-CONFIG_JSON: dict[str, Union[str, int]] = json.load(CONFIG_FILE)
+CONFIG_JSON: Dict[str, Union[str, int]] = json.load(CONFIG_FILE)
 
 MAX_STORE: int = CONFIG_JSON["max_store"]  # Number of store boxes
 PAGE_SIZE: int = CONFIG_JSON["page_size"]  # Items per catalogue page
@@ -22,7 +22,5 @@ BASE_IMAGE_FILE: str = f"{DATA_FOLDER}/defImage.png"  # Default image file
 with open(BASE_IMAGE_FILE, "rb") as img:
     BASE_IMAGE: bytes = img.read()  # Default image bytes
 
-EXPIRY_TIME: datetime.timedelta = datetime.timedelta(
-    milliseconds=CONFIG_JSON["expiry_time_ms"])  # Time until item expires (milliseconds)
-NOTIFY_TIME: datetime.timedelta = datetime.timedelta(
-    milliseconds=CONFIG_JSON["notify_time_ms"])  # How often to notify (milliseconds)
+EXPIRY_TIME: datetime.timedelta = datetime.timedelta(milliseconds=CONFIG_JSON["expiry_time_ms"])  # Time until item expires (milliseconds)
+NOTIFY_TIME: datetime.timedelta = datetime.timedelta(milliseconds=CONFIG_JSON["notify_time_ms"])  # How often to notify (milliseconds)

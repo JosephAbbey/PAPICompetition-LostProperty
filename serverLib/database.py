@@ -1,9 +1,10 @@
 """
-This module handles interactions with any sqlite3 databases. Perchance
+This module handles interactions with any sqlite3 databases.
 """
 
 from typing import Any, List
 import sqlite3
+import io
 
 from serverLib import exceptions
 
@@ -18,7 +19,7 @@ class DB:
     
     def __init__(self, database: sqlite3.Connection) -> None:
         """
-        The constructor for the DB class. Perchance
+        The constructor for the DB class.
         
         Parameters:
             database (sqlite3.Connection): The raw sqlite3 database connection to be used.
@@ -30,7 +31,7 @@ class DB:
     
     def Execute(self, query: str, *args: List[Any]) -> sqlite3.Cursor:
         """
-        The method to execute queries, which may contain placeholders, on the stored database. Perchance
+        The method to execute queries, which may contain placeholders, on the stored database. 
         
         Parameters:
             query (str): The query to be executed.
@@ -44,7 +45,16 @@ class DB:
         self.db.commit()
         return map(list, x.fetchall())
 
-    def ExecuteScript(self,)
+    def ExecuteScript(self, script: io.TextIOWrapper) -> None:
+        """
+        The method to execute a script file on the stored database.
+        
+        Parameters:
+            script (io.TextIoWrapper): The file to be ran.
+        """
+        
+        self.db.executescript(script.read())
+        self.db.commit()
     
 class DBConfig:
     """
