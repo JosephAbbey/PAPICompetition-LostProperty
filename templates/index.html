@@ -1,29 +1,41 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LostProperty</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <script type="module" src="/static/index.mjs"></script>
-    <nav-top></nav-top>
-    <div class="categories">
-        <catalogue-category category="All" id="All"></catalogue-category>
-        {% for category in categories %}
-            <catalogue-category category="{{ category }}" id="{{ category }}"></catalogue-category>
-        {% endfor %}
-    </div>
-    <div class="items">
-        {% for (id, item) in json.items() %}
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LostProperty</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <script type="module" src="/static/index.mjs"></script>
+        <nav-top>
+            <catalogue-category category="All" id="All"></catalogue-category>
+            {% for category in categories %}
+            <catalogue-category
+                category="{{ category }}"
+                id="{{ category }}"
+            ></catalogue-category>
+            {% endfor %}
+        </nav-top>
+
+        <div style="height: 3.8rem"></div>
+
+        <catalogue-pagination
+            current="{{ page }}"
+            final="{{ max }}"
+        ></catalogue-pagination>
+        <div class="items">
+            {% for (id, item) in json.items() %}
             <catalogue-item
                 id="{{ id }}"
                 data="{{ item }}"
                 in-list="1"
             ></catalogue-item>
-        {% endfor %}
-    </div>
-    <catalogue-pagination current="{{ page }}" final="{{ max }}"></catalogue-pagination>
-</body>
+            {% endfor %}
+        </div>
+        <catalogue-pagination
+            current="{{ page }}"
+            final="{{ max }}"
+        ></catalogue-pagination>
+    </body>
 </html>
