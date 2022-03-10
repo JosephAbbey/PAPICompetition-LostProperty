@@ -77,7 +77,7 @@ export default class NavTop extends HTMLElement {
               <span>LostProperty</span>
             </div>
             ${
-                window.location.pathname == 'items'
+                window.location.pathname == '/'
                     ? `<div>
                         <div class="categories">
                           ${this.innerHTML}

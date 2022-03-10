@@ -40,6 +40,8 @@ CREATE TABLE items (
 INSERT INTO category (name) VALUES ("Uniform");
 INSERT INTO category (name) VALUES ("PE");
 INSERT INTO category (name) VALUES ("Tech");
+INSERT INTO category (name) VALUES ("Winter Clothes");
+INSERT INTO category (name) VALUES ("Other");
 
 INSERT INTO colour (name) VALUES ("Black");
 INSERT INTO colour (name) VALUES ("White");
