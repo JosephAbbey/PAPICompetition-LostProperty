@@ -38,14 +38,14 @@ def index():
 
     # Sanitise and format input
     if not categ in serverLib.configs.CATEGORIES: categ: str = "1=1" # "All" condition
-    else: categ: int = serverLib.helpers.ignoredown(categ, "category", lDB) # Convert user chosen category to database id
+    else: categ: str = "category=" + str(serverLib.helpers.ignoredown(categ, "category", lDB)) # Convert user chosen category to database id
 
     # Ceiling round for the number of pages
     max_id: int = -1 * (-list(lDB.Execute(f"SELECT COUNT(1) FROM items WHERE category = {categ}").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE)
 
     id: int = min(id, max_id) # Upper bound
 
-    handler.massPull(f"category = {categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
+    handler.massPull(f"{categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
 
     return render_template("index.html", json=handler.get(), categories=serverLib.configs.CATEGORIES, page=id, max=max_id)
 
