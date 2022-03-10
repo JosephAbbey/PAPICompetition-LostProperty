@@ -52,7 +52,7 @@ def index():
 
     id: int = min(id, max_id)
 
-    handler.massPull(f"{categ} LIMIT {PAGE_SIZE} OFFSET {(id - 1) * PAGE_SIZE}")
+    handler.massPull(f"{categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
 
     return render_template("index.html", json=handler.get(), categories=serverLib.configs.CATEGORIES, page=id, max=max_id)
 
