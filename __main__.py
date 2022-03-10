@@ -8,14 +8,7 @@ modules = [
 ]
 
 installed = [i.key for i in pkg_resources.working_set]
-[
-    os.system(
-        "pip{}.{} install {}".format(
-            sys.version_info.major,
-            sys.version_info.minor, name
-        )
-    ) for name in modules if name not in installed
-]
+[os.system(f"pip{sys.version_info.major}.{sys.version_info.minor} install {name}") for name in modules if name not in installed]
 
 from flask import Flask, render_template, request, redirect, flash, session
 from flask_session import Session
@@ -31,7 +24,6 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 Session(app)
 
-
 @app.route("/")
 def index():
     id: str = request.args.get("page", "1")
@@ -40,19 +32,20 @@ def index():
     lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
 
-    try: id: int = max(int(id), 1) # Verify user input is valid, set to max if not
+    try: id: int = max(int(id), 1) # Lower bound and int
     except ValueError: id: int = 1 # If input is not int, set id to 1 (First page)
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
 
     # Sanitise and format input
-    if not categ in serverLib.configs.CATEGORIES: categ: str = "1=1"
-    else: categ: int = serverLib.helpers.ignoredown(categ, "category", lDB)
+    if not categ in serverLib.configs.CATEGORIES: categ: str = "1=1" # "All" condition
+    else: categ: int = serverLib.helpers.ignoredown(categ, "category", lDB) # Convert user chosen category to database id
 
+    # Ceiling round for the number of pages
     max_id: int = -1 * (-list(lDB.Execute(f"SELECT COUNT(1) FROM items WHERE category = {categ}").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE)
 
-    id: int = min(id, max_id)
+    id: int = min(id, max_id) # Upper bound
 
-    handler.massPull(f"{categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
+    handler.massPull(f"category = {categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
 
     return render_template("index.html", json=handler.get(), categories=serverLib.configs.CATEGORIES, page=id, max=max_id)
 

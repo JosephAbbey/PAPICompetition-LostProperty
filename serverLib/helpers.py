@@ -31,7 +31,7 @@ def ignoredown(value: str, table: str, db: database.DB) -> int:
         int: The corresponding id
     """
 
-    return db.Execute(f"SELECT id FROM {table} WHERE name = ?", value).fetchall()[0][0]
+    return list(db.Execute(f"SELECT id FROM {table} WHERE name = ?", value).fetchall()[0])[0]
 
 def push(item: items.Item, db: database.DB) -> None: # MAKE THIS AN ITEM METHOD
     i = item.rawdict()
