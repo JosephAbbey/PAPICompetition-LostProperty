@@ -96,15 +96,13 @@ def login():
 
     # POST request
 
-    if not (pw := request.form.get("pw")):
-        flash("Please enter a password")
-        return redirect("/login")
+    if not (pw := request.form.get("password")):
+        return "Please enter a password", 401
 
     result: bool = adminAuth.login(pw)
 
     if not result:
-        flash("Password was incorrect")
-        return redirect("/login")
+        return "Password was incorrect", 401
 
     session["admin"] = True
 
