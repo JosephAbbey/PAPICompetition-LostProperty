@@ -109,6 +109,7 @@ def login():
     return redirect("/admin")
 
 
+@adminAuth.makeLogin
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     # GET request
