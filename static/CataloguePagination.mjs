@@ -50,38 +50,11 @@ export default class CataloguePagination extends HTMLElement {
         button:hover {
             background-color: #11111188;
         }
+
+        button.active {
+            background-color: #11111188;
+        }
         `;
-
-        // var el = document.createElement('button');
-        // if (!(this.attrs.current > 2)) el.disabled = true;
-        // el.innerText = '«';
-        // el.onclick = () => setURLParameter('page', '1');
-        // _template.content.appendChild(el);
-
-        // var el1 = document.createElement('button');
-        // if (!(this.attrs.current > 1)) el1.disabled = true;
-        // el1.innerText = this.attrs.current - 1;
-        // el1.onclick = () => setURLParameter('page', this.attrs.current - 1);
-        // _template.content.appendChild(el1);
-
-        // var el2 = document.createElement('button');
-        // el2.innerText = this.attrs.current;
-        // _template.content.appendChild(el2);
-
-        // var el3 = document.createElement('button');
-        // if (!(this.attrs.current < this.attrs.final)) el3.disabled = true;
-        // el3.innerText = this.attrs.current + 1;
-        // el3.onclick = () => setURLParameter('page', this.attrs.current + 1);
-        // _template.content.appendChild(el3);
-
-        // var el4 = document.createElement('button');
-        // if (!(this.attrs.current < this.attrs.final - 1)) el4.disabled = true;
-        // el4.innerText = '»';
-        // el4.onclick = () => setURLParameter('page', this.attrs.final);
-        // _template.content.appendChild(el4);
-
-        // var el5 = document.createElement('div');
-        // el5.appendChild(_template.content.cloneNode(true));
 
         _template.innerHTML = `
             <div>
@@ -95,9 +68,9 @@ export default class CataloguePagination extends HTMLElement {
                         '${this.attrs.current - 1}'
                     )"
                 >
-                    ${this.attrs.current - 1}
+                    ${this.attrs.current - 1 < 1 ? "&nbsp;&nbsp;" : this.attrs.current - 1}
                 </button>
-                <button>${this.attrs.current}</button>
+                <button class="active">${this.attrs.current}</button>
                 <button
                     ${this.attrs.current < this.attrs.final ? '' : 'disabled'}
                     onclick="CataloguePagination.setURLParameter('page', 
