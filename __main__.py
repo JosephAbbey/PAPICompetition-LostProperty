@@ -41,7 +41,7 @@ def index():
     else: categ: str = "category=" + str(serverLib.helpers.ignoredown(categ, "category", lDB)) # Convert user chosen category to database id
 
     # Ceiling round for the number of pages
-    max_id: int = -1 * (-list(lDB.Execute(f"SELECT COUNT(1) FROM items WHERE category = {categ}").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE)
+    max_id: int = -1 * (-list(lDB.Execute(f"SELECT COUNT(1) FROM items WHERE category = {categ}")[0])[0] // serverLib.configs.PAGE_SIZE)
 
     id: int = min(id, max_id) # Upper bound
 

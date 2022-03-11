@@ -29,7 +29,7 @@ class DB:
         self.db.row_factory = sqlite3.Row
         self.cursor: sqlite3.Cursor = self.db.cursor()
     
-    def Execute(self, query: str, *args: List[Any]) -> sqlite3.Cursor:
+    def Execute(self, query: str, *args: List[Any]) -> List[sqlite3.Row]:
         """
         The method to execute queries, which may contain placeholders, on the stored database. 
         
@@ -38,12 +38,12 @@ class DB:
             *args (List[Any]): The values to be substituted in for any ? placeholder characters in the query.
         
         Returns:
-            sqlite3.Cursor: The results wrapped in a sqlite3 cursor object.
+            List[List[Any]]: The results wrapped in a sqlite3 cursor object.
         """
         
         x = self.cursor.execute(query, args)
         self.db.commit()
-        return map(list, x.fetchall())
+        return x.fetchall()
 
     def ExecuteScript(self, script: io.TextIOWrapper) -> None:
         """
