@@ -46,7 +46,7 @@ def login(password: str) -> bool:
     with open(f"{serverLib.configs.DATA_FOLDER}/admin_hash.hash") as f:
         store: str = f.read()
     
-    if hashlib.sha256(password).hexdigest() == store:
+    if hashlib.sha256(password.encode()).hexdigest() == store:
         return True
     
     return False
