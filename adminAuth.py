@@ -1,8 +1,14 @@
 from typing import Set, Union, Optional
 from serverLib import serverLib
-import hashlib
+import hashlib, functools
 
-# DECORATOR HERE
+def makeLogin(func):
+    @functools.wraps(func)
+    def decofunc(*args, **kwargs):
+        if not session.get("admin", False):
+            return redirect("/login")
+        return func(*args, **kwargs)
+    return decofunc
 
 SYMBOLS: str = "~`! @#$%^&*()_-+={[}]|\:;\"'<,>.?/"
 upper: str = ''.join([chr(x + 97) for x in range(26)])
@@ -46,7 +52,7 @@ def login(password: str) -> bool:
     with open(f"{serverLib.configs.DATA_FOLDER}/admin_hash.hash") as f:
         store: str = f.read()
     
-    if hashlib.sha256(password).hexdigest() == store:
+    if hashlib.sha256(password.encode()).hexdigest() == store:
         return True
     
     return False

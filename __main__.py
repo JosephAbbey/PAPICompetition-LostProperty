@@ -41,7 +41,7 @@ def index():
     else: categ: str = "category=" + str(serverLib.helpers.ignoredown(categ, "category", lDB)) # Convert user chosen category to database id
 
     # Ceiling round for the number of pages
-    max_id: int = -1 * (-list(lDB.Execute(f"SELECT COUNT(1) FROM items WHERE category = {categ}").fetchall()[0])[0] // serverLib.configs.PAGE_SIZE)
+    max_id: int = -1 * (-list(lDB.Execute(f"SELECT COUNT(1) FROM items WHERE {categ}")[0])[0] // serverLib.configs.PAGE_SIZE)
 
     id: int = min(id, max_id) # Upper bound
 
@@ -68,7 +68,6 @@ def item():
     i: serverLib.items.Item = handler.items()[0]
 
     return render_template("item.html", id=id, title=i.lookup("title"), json=i.json())
-
 
 @app.route("/photo")
 def photoAPI():
@@ -97,21 +96,20 @@ def login():
 
     # POST request
 
-    if not (pw := request.form.get("pw")):
-        flash("Please enter a password")
-        return redirect("/login")
+    if not (pw := request.form.get("password")):
+        return "Please enter a password", 401
 
     result: bool = adminAuth.login(pw)
 
     if not result:
-        flash("Password was incorrect")
-        return redirect("/login")
+        return "Password was incorrect", 401
 
     session["admin"] = True
 
     return redirect("/admin")
 
 
+@adminAuth.makeLogin
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     # GET request

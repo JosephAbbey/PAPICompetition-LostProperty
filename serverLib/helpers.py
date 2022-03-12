@@ -31,15 +31,7 @@ def ignoredown(value: str, table: str, db: database.DB) -> int:
         int: The corresponding id
     """
 
-    return list(db.Execute(f"SELECT id FROM {table} WHERE name = ?", value).fetchall()[0])[0]
-
-def push(item: items.Item, db: database.DB) -> None: # MAKE THIS AN ITEM METHOD
-    i = item.rawdict()
-    keys: List[str] = list(i.keys()) # Column names
-    values: List[items.item_fields] = list(i.values()) # Values for those columns
-
-    query: str = f"INSERT INTO items ({', '.join(keys)}) VALUES (?{', ?' * (len(keys) - 1)})" # Insert values query
-    return db.Execute(query, *values).fetchall()
+    return list(db.Execute(f"SELECT id FROM {table} WHERE name = ?", value)[0])[0]
 
 def addItem(item: items.Item, db: database.DB) -> None: 
     if not isinstance(item, items.Item):
