@@ -2,6 +2,5 @@
     "max_store": 5,
     "page_size": 16,
     "data_folder": "data",
-    "expiry_time_ms": 604800000,
-    "notify_time_ms": 1814400000
+    "expiry_time_ms": 15724800000
 }

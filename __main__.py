@@ -1,6 +1,6 @@
-import os
-import sys
 import pkg_resources
+import subprocess
+import sqlite3
 
 modules = [
     "flask",
@@ -8,13 +8,13 @@ modules = [
 ]
 
 installed = [i.key for i in pkg_resources.working_set]
-[os.system(f"pip{sys.version_info.major}.{sys.version_info.minor} install {name}") for name in modules if name not in installed]
 
-from flask import Flask, render_template, request, redirect, flash, session
+install_lambda = lambda name: subprocess.run(f"pip3 install {name}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+[install_lambda(name) for name in modules if name not in installed]
+
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 from serverLib import serverLib
-import adminAuth
-import sqlite3
 
 app = Flask(__name__)
 
@@ -88,6 +88,7 @@ def photoAPI():
 
 
 @app.route("/login", methods=["GET", "POST"])
+@serverLib.adminAuth.checkAdmin
 def login():
     # GET request
 
@@ -99,7 +100,7 @@ def login():
     if not (pw := request.form.get("password")):
         return "Please enter a password", 401
 
-    result: bool = adminAuth.login(pw)
+    result: bool = serverLib.adminAuth.login(pw)
 
     if not result:
         return "Password was incorrect", 401
@@ -108,14 +109,21 @@ def login():
 
     return redirect("/admin")
 
-
-@adminAuth.makeLogin
 @app.route("/admin", methods=["GET", "POST"])
+@serverLib.adminAuth.checkLogin
 def admin():
+    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    
+    serverLib.helpers.checkExpire(lDB)
+    
     # GET request
-
     if request.method == "GET":
         return render_template("admin.html")
+
+    config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB) # Database config object
+    
+    expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
+    requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
 
 
 if __name__ == "__main__":

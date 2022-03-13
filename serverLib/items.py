@@ -76,7 +76,7 @@ class Item:
     
     # Internal methods
 
-    def __lookup(self, table: str) -> str:
+    def lookup(self, table: str) -> str:
         """
         The function for converting an ID to its corresponding value.
 
@@ -110,10 +110,10 @@ class Item:
         inner: BaseItem = self.rawdict()
         inner.pop("image", None)
         
-        inner["title"] = self.__lookup("title")
-        inner["category"] = self.__lookup("category")
-        inner["colour"] = self.__lookup("colour")
-        inner["location"] = self.__lookup("location")
+        inner["title"] = self.lookup("title")
+        inner["category"] = self.lookup("category")
+        inner["colour"] = self.lookup("colour")
+        inner["location"] = self.lookup("location")
         
         return inner
     
@@ -127,7 +127,7 @@ class Item:
 
         i = self.rawdict()
         keys: List[str] = list(i.keys()) # Column names
-        values: List[items.item_fields] = list(i.values()) # Values for those columns
+        values: List[item_fields] = list(i.values()) # Values for those columns
 
         query: str = f"INSERT INTO items ({', '.join(keys)}) VALUES (?{', ?' * (len(keys) - 1)})" # Insert values query
         self._db.Execute(query, *values)
