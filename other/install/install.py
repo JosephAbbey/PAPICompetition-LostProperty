@@ -6,11 +6,11 @@ import json
 import os
 
 # Unzip data
+
+print("Extracting files...")
     
 with zipfile.ZipFile("data.zip", mode="r") as archive:
     archive.extractall()
-    
-os.remove("data.zip")
 
 # Generate mainConfig.json (Required for serverLib)
 
@@ -19,6 +19,8 @@ while True:
     except ValueError: print("Input must be a number.") # Input was not a number
     except Exception as e: print(f"An error occured ({type(e).__name__})") # Some other issue occured (Allows for KeyboardInterrupt)
     finally: break
+  
+print("Creating a default configuration file...")
     
 defConfig: Dict[str, Union[str, int]] = {
     "max_store": maxstore, # User set
@@ -29,11 +31,14 @@ defConfig: Dict[str, Union[str, int]] = {
 
 json.dump(defConfig, open("mainConfig.json", "w"), indent=4)
 
+print("Please wait while the core library is installed...")
+ 
 library_wheel: str = "serverLib-0.1.0-py3-none-any.whl"
 subprocess.run(f"pip3 install {library_wheel}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
-os.remove(library_wheel)
 
 from serverLib import serverLib # serverLib can now be imported
+
+print("Creating database template...")
 
 open(serverLib.configs.DATABASE, "w").close() # Create database file
 
@@ -52,3 +57,11 @@ while True:
     if details is None: break
     
     print(details)
+    
+print("Removing setup files...")
+    
+os.remove("data.zip")
+os.remove(library_wheel)
+os.remove(__file__)
+
+print("Fully installed!")
