@@ -1,16 +1,49 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-</head>
-<body>
-    <script type="module" src="/static/index.mjs"></script>
-    <nav-top></nav-top>
-    <div style="height: 3.8rem"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin</title>
+        <link rel="stylesheet" href="/static/style.css" />
+        <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    </head>
+    <body>
+        <script type="module" src="/static/index.mjs"></script>
+        <nav-top></nav-top>
+        <div style="height: 3.8rem"></div>
 
-</body>
+        <div class="actions">
+            <a href="/add">
+                <img
+                    alt="request"
+                    style="height: 1em"
+                    src="./static/icons/request.svg"
+                />
+                Add Item</a
+            >
+        </div>
+
+        <div class="admin">
+            <div class="requested">
+                <h2>Requested Items</h2>
+                {% for (id, item) in requested.items() %}
+                <catalogue-item
+                    id="{{ id }}"
+                    data="{{ item }}"
+                    in-list="1"
+                ></catalogue-item>
+                {% endfor %}
+            </div>
+            <div class="expired">
+                <h2>Expired Items</h2>
+                {% for (id, item) in expired.items() %}
+                <catalogue-item
+                    id="{{ id }}"
+                    data="{{ item }}"
+                    in-list="1"
+                ></catalogue-item>
+                {% endfor %}
+            </div>
+        </div>
+    </body>
 </html>

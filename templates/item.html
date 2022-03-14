@@ -1,21 +1,43 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-</head>
-<body>
-    <script type="module" src="/static/index.mjs"></script>
-    <nav-top></nav-top>
-    <div style="height: 3.8rem"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ title }}</title>
+        <link rel="stylesheet" href="/static/style.css" />
+        <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    </head>
+    <body>
+        <script type="module" src="/static/index.mjs"></script>
+        <nav-top></nav-top>
+        <div style="height: 3.8rem"></div>
 
-    <catalogue-item
-        id="{{ id }}"
-        data="{{ json }}"
-    ></catalogue-item>
-    <a href="mailto:lostproperty@example.com?subject=Item%20Request&body=I%20would%20like%20to%20request%20item%20{{ title }}%20({{ id }})"><img style="height: 1em;" src="./static/icons/request.svg"></img> Request Item</a>
-</body>
+        <catalogue-item id="{{ id }}" data="{{ json }}"></catalogue-item>
+
+        <div class="actions">
+            <a
+                href="mailto:lostproperty@example.com?subject=Item%20Request&body=I%20would%20like%20to%20request%20item%20{{ title }}%20({{ id }})"
+            >
+                <img
+                    alt="request"
+                    style="height: 1em"
+                    src="./static/icons/request.svg"
+                />
+                Request Item
+            </a>
+
+            {% if admin %}
+            <a
+                href="mailto:lostproperty@example.com?subject=Item%20Request&body=I%20would%20like%20to%20request%20item%20{{ title }}%20({{ id }})"
+            >
+                <img
+                    alt="remove"
+                    style="height: 1em"
+                    src="./static/icons/remove.svg"
+                />
+                Remove Item
+            </a>
+            {% endif %}
+        </div>
+    </body>
 </html>

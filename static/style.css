@@ -8,7 +8,14 @@ body {
     color: white;
 }
 
-a {
+.actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+}
+
+.actions a {
     color: white;
     background-color: rgb(1, 76, 173);
     padding: 0.5rem;
@@ -17,10 +24,10 @@ a {
     display: grid;
     grid-template-columns: 2rem 8rem;
     width: fit-content;
-    margin: auto;
+    margin: 2rem;
 }
 
-a img {
+.actions a img {
     margin: auto;
 }
 
@@ -42,6 +49,20 @@ catalogue-pagination {
     flex-direction: row;
     justify-content: center;
     margin: 0.5rem;
+}
+
+.admin {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+}
+
+.admin .requested,
+.admin .expired {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 /* Scrollbar */

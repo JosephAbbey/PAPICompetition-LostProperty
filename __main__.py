@@ -67,7 +67,7 @@ def item():
 
     i: serverLib.items.Item = handler.items()[0]
 
-    return render_template("item.html", id=id, title=i.lookup("title"), json=i.json())
+    return render_template("item.html", id=id, title=i.lookup("title"), json=i.json(), admin=session.get("admin", False))
 
 @app.route("/photo")
 def photoAPI():
@@ -118,7 +118,7 @@ def admin():
     
     # GET request
     if request.method == "GET":
-        return render_template("admin.html")
+        return render_template("admin.html", requested={}, expired={}) # Ben add requested and expired please
 
     config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB) # Database config object
     
