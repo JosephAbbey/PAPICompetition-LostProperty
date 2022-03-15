@@ -123,8 +123,8 @@ def admin():
         expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
         requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
 
-        expired.massPull(f"id in ({', '.join(notify.expired())})")
-        requested.massPull(f"id in ({', '.join(notify.requested())})")
+        expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))})")
+        requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))})")
 
         return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Ben add requested and expired please
 

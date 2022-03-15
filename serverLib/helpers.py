@@ -43,16 +43,18 @@ class Notify:
     def expire(self, ids: List[int]) -> None:
         valid_ids: List[int] = [id for id in ids if (id not in self.requested() and id not in self.expired())]
 
-        list(map(self.expired().add, valid_ids))
+        list(map(self.expired().append, valid_ids))
 
         self.__save()
 
     def request(self, ids: List[int]) -> None:
         valid_ids: List[int] = [id for id in ids if id not in self.requested()]
 
-        list(map(self.expired().discard, ids))
+        expired: List[int] = self.expired()
+        for id in valid_ids:
+            if id in expired: expired.remove(id)
 
-        list(map(self.requested.add, valid_ids))
+        list(map(self.requested().append, valid_ids))
 
         self.__save()
 
@@ -110,4 +112,4 @@ def checkExpire(db: database.DB, notif: Notify = Notify()) -> None:
     if not ids:
         return # If there are no expired items, return early
     
-    notif.expire(handler.items()) # Notify about items to remove
+    notif.expire(ids) # Notify about items to remove
