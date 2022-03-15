@@ -50,6 +50,6 @@ sudo bash install.bat
 ### Run command
 
 ```
-uwsgi --socket 0.0.0.0:80 --protocol=http --file LostProperty/__main__.py --callable app
+uwsgi --socket 0.0.0.0:8000 --protocol=http --file LostProperty/__main__.py --callable app
 ```
 

@@ -116,16 +116,20 @@ def admin():
     
     serverLib.helpers.checkExpire(lDB)
     
+    notify: serverLib.helpers.Notify = serverLib.helpers.Notify()
+
     # GET request
     if request.method == "GET":
         expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
         requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
 
+        expired.massPull(f"id in ({', '.join(notify.expired())})")
+        requested.massPull(f"id in ({', '.join(notify.requested())})")
+
         return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Ben add requested and expired please
 
     config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB) # Database config object
     
-
 
 if __name__ == "__main__":
     app.run()

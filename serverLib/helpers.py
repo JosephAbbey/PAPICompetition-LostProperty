@@ -16,7 +16,7 @@ class Notify:
         data (Dict[str, Set[int]]): A dictionary holding two sets of ids (one for expired items, one for requested items).
     """
     
-    def __init__(self, savefile: str) -> None:
+    def __init__(self, savefile: str = configs.NOTIFY_FILE) -> None:
         if not isinstance(savefile, str):
             raise exceptions.InvalidInput
         
@@ -25,8 +25,8 @@ class Notify:
         if not os.path.isfile(savefile): open(savefile, "w").close()
         
         with open(self.file, "r") as f:
-            try: self.data: Dict[str, Set[int]] = dict(json.load(f))
-            except json.decoder.JSONDecodeError: self.data: Dict[str, Set[int]] = {"exp": {}, "req": {}}
+            try: self.data: Dict[str, List[int]] = dict(json.load(f))
+            except json.decoder.JSONDecodeError: self.data: Dict[str, Set[int]] = {"exp": [], "req": []}
 
         self.__save()
     
@@ -34,19 +34,27 @@ class Notify:
         with open(self.file, "w") as f:
             json.dump(self.data, f, indent=4)
     
-    def expired(self) -> Set[int]:
+    def expired(self) -> List[int]:
         return self.data["exp"]
 
-    def requested(self) -> Set[int]:
+    def requested(self) -> List[int]:
         return self.data["req"]
 
     def expire(self, ids: List[int]) -> None:
-        valid_ids: List[int] = [id for id in ids where id not in self.requested()]
+        valid_ids: List[int] = [id for id in ids if (id not in self.requested() and id not in self.expired())]
 
-        self.data["exp"].add()
+        list(map(self.expired().add, valid_ids))
+
+        self.__save()
 
     def request(self, ids: List[int]) -> None:
-        pass
+        valid_ids: List[int] = [id for id in ids if id not in self.requested()]
+
+        list(map(self.expired().discard, ids))
+
+        list(map(self.requested.add, valid_ids))
+
+        self.__save()
 
 def ignoredown(value: str, table: str, db: database.DB) -> int:
     """
@@ -91,7 +99,7 @@ def removeItem(id: int, db: database.DB) -> None:
     
     db.Execute("DELETE FROM items WHERE id = ?", id) # Delete item
     
-def checkExpire(db: database.DB, notif: Notify = Notify(configs.NOTIFY_FILE)) -> None:
+def checkExpire(db: database.DB, notif: Notify = Notify()) -> None:
     current: datetime.datetime = datetime.datetime.now(datetime.timezone.utc) # Current time (UTC)
     barrier: datetime.timedelta = current - configs.EXPIRY_TIME # Get lower bound on times
     
@@ -102,4 +110,4 @@ def checkExpire(db: database.DB, notif: Notify = Notify(configs.NOTIFY_FILE)) ->
     if not ids:
         return # If there are no expired items, return early
     
-    notif.notify(handler.items()) # Notify about items to remove
+    notif.expire(handler.items()) # Notify about items to remove
