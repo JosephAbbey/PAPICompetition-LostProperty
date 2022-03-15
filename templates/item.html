@@ -26,7 +26,7 @@
                 Request Item
             </a>
 
-            {% if admin %}
+            {% if session["admin"] %}
             <a
                 href="mailto:lostproperty@example.com?subject=Item%20Request&body=I%20would%20like%20to%20request%20item%20{{ title }}%20({{ id }})"
             >

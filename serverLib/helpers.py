@@ -26,15 +26,25 @@ class Notify:
         
         with open(self.file, "r") as f:
             try: self.data: Dict[str, Set[int]] = dict(json.load(f))
-            except json.decoder.JSONDecodeError: self.data: Dict[str, Set[int]] = dict()
+            except json.decoder.JSONDecodeError: self.data: Dict[str, Set[int]] = {"exp": {}, "req": {}}
+
+        self.__save()
     
     def __save(self) -> None:
         with open(self.file, "w") as f:
             json.dump(self.data, f, indent=4)
     
+    def expired(self) -> Set[int]:
+        return self.data["exp"]
+
+    def requested(self) -> Set[int]:
+        return self.data["req"]
+
     def expire(self, ids: List[int]) -> None:
-        pass
-    
+        valid_ids: List[int] = [id for id in ids where id not in self.requested()]
+
+        self.data["exp"].add()
+
     def request(self, ids: List[int]) -> None:
         pass
 
