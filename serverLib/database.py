@@ -55,6 +55,9 @@ class DB:
         
         self.db.executescript(script.read())
         self.db.commit()
+
+    def lastid(self) -> int:
+        return self.cursor.lastrowid
     
 class DBConfig:
     """

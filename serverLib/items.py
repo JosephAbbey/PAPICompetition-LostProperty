@@ -134,6 +134,8 @@ class Item:
 
         del self
 
+        return self._db.lastid()
+
     def json(self) -> str:
         """
         The method for getting an item formatted as JSON.

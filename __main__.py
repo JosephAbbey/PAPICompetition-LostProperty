@@ -149,12 +149,12 @@ def admin():
 
     config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB) # Database config object
     
-@app.route("add")
+@app.route("/add")
 @serverLib.adminAuth.checkLogin
 def add():
     # GET request
     if request.method == "GET":
-        return render_template("add.html")
+        return render_template("add.html", categories, )
     
     lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
 
@@ -167,9 +167,13 @@ def add():
         "store": request.form.get("store")
     }
 
-    i: serverLib.items.Item() = serverLib.items.Item(b_item)
+    try: i: serverLib.items.Item = serverLib.items.Item(b_item)
+    except serverLib.exceptions.BadItem: return "Bad value", 400
+    except Exception as e: return f"{type(e)} : {e}", 500  # General error case
 
-    i.push()
+    id: int = i.push()
+
+    return redirect(f"/item?id={id}")
 
 if __name__ == "__main__":
     app.run()
