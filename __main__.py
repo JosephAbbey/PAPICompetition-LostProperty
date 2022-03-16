@@ -69,6 +69,26 @@ def item():
 
     return render_template("item.html", id=id, title=i.lookup("title"), json=i.json())
 
+@app.route("/request")
+def requestAPI():
+    if not (id := request.args.get("id")):
+        return redirect("/")
+
+    try: id: int = int(id)
+    except ValueError: return redirect("/")
+    except Exception as e: return f"{type(e)} : {e}", 500  # General error case
+
+    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
+
+    try: handler.pull(id)
+    except serverLib.exceptions.InvalidInput: return redirect("/"), 400
+
+    notify: serverLib.helpers.Notify = serverLib.helpers.Notify()
+    notify.request([id])
+
+    return "OK", 200
+
 @app.route("/photo")
 def photoAPI():
     if not (id := request.args.get("id")):
@@ -85,7 +105,6 @@ def photoAPI():
     except serverLib.exceptions.InvalidInput: return "Error 3 (Supplied ID was not a valid Item)", 418
 
     return handler.items()[0].image()
-
 
 @app.route("/login", methods=["GET", "POST"])
 @serverLib.adminAuth.checkAdmin
@@ -123,13 +142,34 @@ def admin():
         expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
         requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
 
-        expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))})")
-        requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))})")
+        expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))})") # Get expired items
+        requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))})") # Get requested items
 
-        return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Ben add requested and expired please
+        return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Joseph fix item list formatting
 
     config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB) # Database config object
     
+@app.route("add")
+@serverLib.adminAuth.checkLogin
+def add():
+    # GET request
+    if request.method == "GET":
+        return render_template("add.html")
+    
+    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+
+    b_item: serverLib.items.BaseItem = {
+        "title": request.form.get("title"),
+        "category": serverLib.helpers.ignoredown(request.form.get("category"), "category", lDB),
+        "colour": serverLib.helpers.ignoredown(request.form.get("colour"), "colour", lDB),
+        "image": request.form.get("image"),
+        "location": serverLib.helpers.ignoredown(request.form.get("location"), "location", lDB),
+        "store": request.form.get("store")
+    }
+
+    i: serverLib.items.Item() = serverLib.items.Item(b_item)
+
+    i.push()
 
 if __name__ == "__main__":
     app.run()

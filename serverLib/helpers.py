@@ -2,7 +2,7 @@
 This module contains a number of helpful functions for the serverLib library.
 """
 
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 import datetime, json, os
 
 from serverLib import configs, database, exceptions, items
@@ -58,7 +58,7 @@ class Notify:
 
         self.__save()
 
-def ignoredown(value: str, table: str, db: database.DB) -> int:
+def ignoredown(value: str, table: str, db: database.DB) -> Optional[int]:
     """
     The opposite of the serverLib.items.Item.lookup method.
 
@@ -70,6 +70,8 @@ def ignoredown(value: str, table: str, db: database.DB) -> int:
     Returns:
         int: The corresponding id
     """
+
+    if not value: return None
 
     return list(db.Execute(f"SELECT id FROM {table} WHERE name = ?", value)[0])[0]
 
