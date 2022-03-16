@@ -29,7 +29,8 @@ def index():
     id: str = request.args.get("page", "1")
     categ: str = request.args.get("category", "1=1")
 
-    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
+    lDB: serverLib.database.DB = serverLib.database.DB(conn)
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
 
     try: id: int = max(int(id), 1) # Lower bound and int
@@ -59,7 +60,8 @@ def item():
     except ValueError: return redirect("/")
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
 
-    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
+    lDB: serverLib.database.DB = serverLib.database.DB(conn)
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
 
     try: handler.pull(id)
@@ -69,16 +71,17 @@ def item():
 
     return render_template("item.html", id=id, title=i.lookup("title"), json=i.json())
 
-@app.route("/request")
+@app.route("/request", methods=["POST"])
 def requestAPI():
-    if not (id := request.args.get("id")):
+    if not (id := request.form.get("id")):
         return redirect("/")
 
     try: id: int = int(id)
     except ValueError: return redirect("/")
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
 
-    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
+    lDB: serverLib.database.DB = serverLib.database.DB(conn)
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
 
     try: handler.pull(id)
@@ -92,17 +95,18 @@ def requestAPI():
 @app.route("/photo")
 def photoAPI():
     if not (id := request.args.get("id")):
-        return "Error 1 (No ID supplied)", 400
+        return "No ID supplied", 400
 
     try: id: int = int(id)
-    except ValueError: return "Error 2 (Supplied ID was not a number)", 400
+    except ValueError: return "Supplied ID was not a number", 400
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
 
-    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
+    lDB: serverLib.database.DB = serverLib.database.DB(conn)
     handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
 
     try: handler.pull(id)
-    except serverLib.exceptions.InvalidInput: return "Error 3 (Supplied ID was not a valid Item)", 418
+    except serverLib.exceptions.InvalidInput: return "Supplied ID was not a valid Item", 418
 
     return handler.items()[0].image()
 
@@ -131,7 +135,8 @@ def login():
 @app.route("/admin", methods=["GET", "POST"])
 @serverLib.adminAuth.checkLogin
 def admin():
-    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
+    lDB: serverLib.database.DB = serverLib.database.DB(conn)
     
     serverLib.helpers.checkExpire(lDB)
     
@@ -142,21 +147,22 @@ def admin():
         expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
         requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
 
-        expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))})") # Get expired items
-        requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))})") # Get requested items
+        expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))}) LIMIT 50") # Get expired items
+        requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))}) LIMIT 50") # Get requested items
 
         return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Joseph fix item list formatting
 
     config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB) # Database config object
     
-@app.route("/add")
+@app.route("/add", methods=["GET", "POST"])
 @serverLib.adminAuth.checkLogin
 def add():
     # GET request
     if request.method == "GET":
         return render_template("add.html", categories, )
     
-    lDB: serverLib.database.DB = serverLib.database.DB(sqlite3.connect(serverLib.configs.DATABASE))
+    conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
+    lDB: serverLib.database.DB = serverLib.database.DB(conn)
 
     b_item: serverLib.items.BaseItem = {
         "title": request.form.get("title"),
@@ -174,6 +180,29 @@ def add():
     id: int = i.push()
 
     return redirect(f"/item?id={id}")
+    
+@app.route("/remove")
+@serverLib.adminAuth.checkLogin
+def remove():
+    if not (id := request.args.get("id")):
+        return "No ID supplied", 400
+
+    try: id: int = int(id)
+    except ValueError: return "Supplied ID was not a number", 400
+    except Exception as e: return f"{type(e)} : {e}", 500  # General error case
+
+    conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
+    lDB: serverLib.database.DB = serverLib.database.DB(conn)
+
+    handler: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB)
+
+    try: handler.pull(id) # Verify ID is valid
+    except serverLib.exceptions.InvalidInput: return "Supplied ID was not a number", 400
+    except Exception as e: return f"{type(e)} : {e}", 500  # General error case
+
+    serverLib.helpers.removeItem(id, lDB)
+
+    return redirect("/admin")
 
 if __name__ == "__main__":
     app.run()
