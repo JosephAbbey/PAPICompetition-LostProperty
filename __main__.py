@@ -1,3 +1,4 @@
+from typing import List
 import pkg_resources
 import subprocess
 import sqlite3
@@ -24,6 +25,8 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 Session(app)
 
+flatten_list = lambda l: [item for sublist in l for item in sublist]
+
 @app.route("/")
 def index():
     id: str = request.args.get("page", "1")
@@ -37,8 +40,10 @@ def index():
     except ValueError: id: int = 1 # If input is not int, set id to 1 (First page)
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
 
+    categories_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM category"))))
+
     # Sanitise and format input
-    if not categ in serverLib.configs.CATEGORIES: categ: str = "1=1" # "All" condition
+    if not categ in categories_list: categ: str = "1=1" # "All" condition
     else: categ: str = "category=" + str(serverLib.helpers.ignoredown(categ, "category", lDB)) # Convert user chosen category to database id
 
     # Ceiling round for the number of pages
@@ -48,7 +53,7 @@ def index():
 
     handler.massPull(f"{categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
 
-    return render_template("index.html", json=handler.get(), categories=serverLib.configs.CATEGORIES, page=id, max=max_id)
+    return render_template("index.html", json=handler.get(), categories=categories_list, page=id, max=max_id)
 
 
 @app.route("/item")
@@ -66,6 +71,7 @@ def item():
 
     try: handler.pull(id)
     except serverLib.exceptions.InvalidInput: return redirect("/")
+    except Exception as e: return f"{type(e)} : {e}", 500  # General error case
 
     i: serverLib.items.Item = handler.items()[0]
 
@@ -157,13 +163,17 @@ def admin():
 @app.route("/add", methods=["GET", "POST"])
 @serverLib.adminAuth.checkLogin
 def add():
-    # GET request
-    if request.method == "GET":
-        return render_template("add.html", categories, )
-    
     conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
     lDB: serverLib.database.DB = serverLib.database.DB(conn)
 
+    categories_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM category"))))
+    colours_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM colour"))))
+    locations_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM location"))))
+
+    # GET request
+    if request.method == "GET":
+        return render_template("add.html", categories=categories_list, colours=colours_list, locations=locations_list)
+    
     b_item: serverLib.items.BaseItem = {
         "title": request.form.get("title"),
         "category": serverLib.helpers.ignoredown(request.form.get("category"), "category", lDB),

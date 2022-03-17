@@ -16,7 +16,6 @@ CONFIG_JSON: Dict[str, Union[str, int]] = json.load(CONFIG_FILE)
 
 MAX_STORE: int = CONFIG_JSON["max_store"]  # Number of store boxes
 PAGE_SIZE: int = CONFIG_JSON["page_size"]  # Items per catalogue page
-CATEGORIES: List[str] = ["Uniform", "Tech", "PE", "Winter Clothes", "Other"]
 
 # External data files
 

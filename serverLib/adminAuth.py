@@ -33,8 +33,19 @@ SYMBOLS: str = "~`! @#$%^&*()_-+={[}]|\:;\"'<,>.?/"
 upper: str = ''.join([chr(x + 97) for x in range(26)])
 nums: str = ''.join([str(x) for x in range(10)])
 
-def intersectionCheck(pwSet: Set[chr], check: Union[Set[chr], str]) -> bool:
-    return not pwSet.intersection(check)
+def intersectionCheck(set1: Set[chr], set2: Union[Set[chr], str]) -> bool:
+    """
+    The function for finding if two sets have any identical values.
+
+    Parameters:
+        set1 (Set[chr]): One of the sets to compare.
+        set2 (Union[Set[chr], str]): The other set to compare.
+
+    Returns:
+        bool: Whether the two sets share any values.
+    """
+
+    return not set1.intersection(set2)
 
 def strength(pw: str) -> Optional[str]:
     """
@@ -44,7 +55,7 @@ def strength(pw: str) -> Optional[str]:
         pw (str): The password to check.
 
     Returns:
-        Optional[str]: A str on faliure, None on success
+        Optional[str]: A str on faliure, None on success.
     """
 
     pw_asSet: set[chr] = set(pw)
