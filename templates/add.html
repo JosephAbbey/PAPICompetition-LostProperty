@@ -1,0 +1,58 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ title }}</title>
+        <link rel="stylesheet" href="/static/style.css" />
+        <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    </head>
+    <body>
+        <script type="module" src="/static/index.mjs"></script>
+        <nav-top></nav-top>
+        <div style="height: 3.8rem"></div>
+
+        <div id="camera">
+            <button id="start-camera">Start Camera</button>
+            <video id="video" width="320" height="240" autoplay></video>
+            <button id="click-photo">Click Photo</button>
+            <canvas id="canvas" width="320" height="240"></canvas>
+            <script>
+                let camera_button = document.querySelector("#start-camera");
+                let video = document.querySelector("#video");
+                let click_button = document.querySelector("#click-photo");
+
+                camera_button.addEventListener('click', async function() {
+                    let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                    video.srcObject = stream;
+                });
+
+                click_button.addEventListener('click', function() {
+                    console.log(video.srcObject);
+                });
+            </script>
+        </div>
+
+        <form action="/add" method="post">
+            <input type="text" name="title" id="title" placeholder="title">
+            <select name="category" id="category">
+                {% for category in categories %}
+                    <option value="{{ category }}"></option>
+                {% endfor %}
+            </select>
+            <select name="colour" id="colour">
+                {% for colour in colours %}
+                    <option value="{{ colour }}"></option>
+                {% endfor %}
+            </select>
+            <button type="button" onclick="takeImage()">Add image</button>
+            <input type="file" hidden>
+            <select name="location" id="location">
+                {% for location in locations %}
+                    <option value="{{ location }}"></option>
+                {% endfor %}
+            </select>
+            <input type="text" name="store" placeholder="store">
+        </form>
+    </body>
+</html>
