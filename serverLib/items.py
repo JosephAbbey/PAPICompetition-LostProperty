@@ -131,10 +131,12 @@ class Item:
 
         query: str = f"INSERT INTO items ({', '.join(keys)}) VALUES (?{', ?' * (len(keys) - 1)})" # Insert values query
         self._db.Execute(query, *values)
+        
+        id: int = self._db.lastid()
 
         del self
 
-        return self._db.lastid()
+        return id
 
     def json(self) -> str:
         """

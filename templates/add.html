@@ -68,15 +68,15 @@
                 {% endfor %}
             </select>
             <button type="button" onclick="takeImage()">Add image</button>
-            <input id="image" type="file">
+            <input name="image" id="image" type="file">
             <select name="location" id="location">
                 {% for location in locations %}
                     <option value="{{ location }}">{{ location }}</option>
                 {% endfor %}
             </select>
-            <input type="number" name="store" placeholder="store">
+            <input type="number" name="store" placeholder="store" required>
 
-            <button>add</button>
+            <button>Add item</button>
         </form>
     </body>
 </html>

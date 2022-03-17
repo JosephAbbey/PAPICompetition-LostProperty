@@ -173,15 +173,23 @@ def add():
 
     # GET request
     if request.method == "GET":
-        return render_template("add.html", title=title_list, categories=categories_list, colours=colours_list, locations=locations_list)
+        return render_template("add.html", titles=title_list, categories=categories_list, colours=colours_list, locations=locations_list)
+    
+    store_str: str = request.form.get("store")
+    
+    try: store: int = int(store_str)
+    except ValueError: return "Bad store number", 400
+    except Exception as e: return f"{type(e)} : {e}", 500  # General error case
+    
+    print(type(request.form["image"]))
     
     b_item: serverLib.items.BaseItem = {
-        "title": request.form.get("title"),
+        "title": serverLib.helpers.ignoredown(request.form.get("title"), "title", lDB),
         "category": serverLib.helpers.ignoredown(request.form.get("category"), "category", lDB),
         "colour": serverLib.helpers.ignoredown(request.form.get("colour"), "colour", lDB),
         "image": request.form.get("image"),
         "location": serverLib.helpers.ignoredown(request.form.get("location"), "location", lDB),
-        "store": request.form.get("store")
+        "store": store
     }
 
     try: i: serverLib.items.Item = serverLib.items.Item(b_item, lDB)
