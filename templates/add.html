@@ -12,71 +12,108 @@
         <nav-top></nav-top>
         <div style="height: 3.8rem"></div>
 
-        <div id="camera">
-            <button id="camera">Take photo</button>
-            <video id="video" width="320" height="240" autoplay></video>
-            <canvas id="canvas" width="320" height="240" hidden></canvas>
-            <script>
-                let camera_button = document.querySelector("#camera");
-                let video = document.querySelector("#video");
-                
-                navigator.mediaDevices.getUserMedia({video: true})
-                    .then(stream => {
-                        video.srcObject = stream; 
-                        return video.play();
-                    })
-                    .then(() => {
-                        camera_button.disabled = false;
-                        camera_button.onclick = e => {
-                            takeASnap().then(a => {
-                                var file = new File([a], "img.jpg", { type:"image/jpeg", lastModified: new Date().getTime() });
-                                
-                                var container = new DataTransfer();
-                                container.items.add(file);
-                                document.querySelector("#image").files = container.files;
-                            });
-                        };
-                    });
+        <div class="modal">
+            <div class="modal-content">
+                <video
+                    id="video"
+                    width="320"
+                    height="240"
+                    autoplay
+                    style="display: block; padding-bottom: 1rem"
+                ></video>
+                <canvas id="canvas" width="320" height="240" hidden></canvas>
+                <button id="camera">Take photo</button>
+                <script>
+                    let camera_button = document.querySelector('#camera');
+                    let video = document.querySelector('#video');
 
-                function takeASnap(){
-                    const canvas = document.querySelector('#canvas'); 
-                    const ctx = canvas.getContext('2d'); 
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    ctx.drawImage(video, 0,0);
-                    return new Promise((res, rej)=>{
-                        canvas.toBlob(res, 'image/jpeg');
-                    });
-                }
-            </script>
+                    navigator.mediaDevices
+                        .getUserMedia({ video: true })
+                        .catch((err) => {
+                            console.log(err);
+                            alert('Camera not available');
+                            window.location = '/admin';
+                        })
+                        .then((stream) => {
+                            video.srcObject = stream;
+                            return video.play();
+                        })
+                        .then(() => {
+                            camera_button.disabled = false;
+                            camera_button.onclick = (e) => {
+                                takeASnap().then((a) => {
+                                    var file = new File([a], 'img.jpg', {
+                                        type: 'image/jpeg',
+                                        lastModified: new Date().getTime(),
+                                    });
+
+                                    var container = new DataTransfer();
+                                    container.items.add(file);
+                                    document.querySelector('#image').files =
+                                        container.files;
+                                    document.querySelector(
+                                        '.modal'
+                                    ).style.display = 'none';
+                                });
+                            };
+                        });
+
+                    function takeASnap() {
+                        const canvas = document.querySelector('#canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        ctx.drawImage(video, 0, 0);
+                        return new Promise((res, rej) => {
+                            canvas.toBlob(res, 'image/jpeg');
+                        });
+                    }
+                </script>
+            </div>
         </div>
 
-        <form action="/add" method="post">
-            <select name="title" id="title">
+        <form action="/add" method="post" enctype="multipart/form-data">
+            <label for="title">Title: </label>
+            <select title="title" name="title" id="title">
                 {% for title in titles %}
-                    <option value="{{ title }}">{{ title }}</option>
+                <option value="{{ title }}">{{ title }}</option>
                 {% endfor %}
             </select>
-            <select name="category" id="category">
+            <label for="category">Category: </label>
+            <select title="category" name="category" id="category">
                 {% for category in categories %}
-                    <option value="{{ category }}">{{ category }}</option>
+                <option value="{{ category }}">{{ category }}</option>
                 {% endfor %}
             </select>
-            <select name="colour" id="colour">
+            <label for="colour">Colour: </label>
+            <select title="colour" name="colour" id="colour">
                 {% for colour in colours %}
-                    <option value="{{ colour }}">{{ colour }}</option>
+                <option value="{{ colour }}">{{ colour }}</option>
                 {% endfor %}
             </select>
-            <button type="button" onclick="takeImage()">Add image</button>
-            <input name="image" id="image" type="file">
-            <select name="location" id="location">
+            <button
+                type="button"
+                onclick="document.querySelector('.modal').style.display = 'block'"
+            >
+                Add image
+            </button>
+            <input name="image" id="image" type="file" hidden />
+            <label for="location">Location: </label>
+            <select title="location" name="location" id="location">
                 {% for location in locations %}
-                    <option value="{{ location }}">{{ location }}</option>
+                <option value="{{ location }}">{{ location }}</option>
                 {% endfor %}
             </select>
-            <input type="number" name="store" placeholder="store" required>
+            <label for="store">Store: </label>
+            <input
+                value="1"
+                type="number"
+                name="store"
+                placeholder="store"
+                required
+            />
 
-            <button>Add item</button>
+            <button type="submit">Add item</button>
         </form>
     </body>
 </html>

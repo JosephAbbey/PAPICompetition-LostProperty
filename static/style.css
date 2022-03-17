@@ -51,6 +51,51 @@ catalogue-pagination {
     margin: 0.5rem;
 }
 
+.modal {
+    content: '';
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    box-shadow: 0px 0px 29px 3px rgba(0, 0, 0, 0.75);
+    border-radius: 2rem;
+    background-color: #3c3f47;
+    margin: auto;
+    padding: 20px;
+    width: 80%;
+}
+
+.modal-content * {
+    margin: auto;
+}
+
+button,
+input,
+select {
+    color: white;
+    background-color: rgb(41 42 46);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    width: fit-content;
+    min-width: 8rem;
+    margin: 0.5rem;
+    border: none;
+}
+
+select {
+    border-right: solid 0.25rem rgb(41 42 46);
+}
+
 .admin {
     display: grid;
     grid-template-columns: 1fr 1fr;

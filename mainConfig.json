@@ -2,5 +2,5 @@
     "max_store": 5,
     "page_size": 16,
     "data_folder": "data",
-    "expiry_time_ms": 10000
+    "expiry_time_ms": 1000000
 }

@@ -78,9 +78,9 @@ def item():
 
     return render_template("item.html", id=id, title=i.lookup("title"), json=i.json())
 
-@app.route("/request", methods=["POST"])
+@app.route("/request", methods=["GET"])
 def requestAPI():
-    if not (id := request.form.get("id")):
+    if not (id := request.args.get("id")):
         return redirect("/")
 
     try: id: int = int(id)
@@ -177,7 +177,7 @@ def add():
         return render_template("add.html", titles=title_list, categories=categories_list, colours=colours_list, locations=locations_list)
     
     store_str: str = request.form.get("store")
-    
+
     try: store: int = int(store_str)
     except ValueError: return "Bad store number", 400
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
@@ -186,7 +186,7 @@ def add():
         "title": serverLib.helpers.ignoredown(request.form.get("title"), "title", lDB),
         "category": serverLib.helpers.ignoredown(request.form.get("category"), "category", lDB),
         "colour": serverLib.helpers.ignoredown(request.form.get("colour"), "colour", lDB),
-        "image": request.form.get("image"),
+        "image": request.files.get("image").read(),
         "location": serverLib.helpers.ignoredown(request.form.get("location"), "location", lDB),
         "store": store
     }

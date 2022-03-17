@@ -102,7 +102,7 @@ def removeItem(id: int, db: database.DB) -> None:
         raise exceptions.InvalidInput # Validate input
     
     db.Execute("DELETE FROM items WHERE id = ?", id) # Delete item
-    
+
 def checkExpire(db: database.DB, notif: Notify = Notify()) -> None:
     current: datetime.datetime = datetime.datetime.now(datetime.timezone.utc) # Current time (UTC)
     barrier: datetime.timedelta = current - configs.EXPIRY_TIME # Get lower bound on times
