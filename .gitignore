@@ -135,3 +135,6 @@ Scripts/
 pyvenv.cfg
 PAPI-Competition.code-workspace
 .vscode/
+
+# Flask
+flask_session/

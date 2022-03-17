@@ -21,6 +21,7 @@ app = Flask(__name__)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config['SESSION_FILE_THRESHOLD'] = 10
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 Session(app)
@@ -180,8 +181,6 @@ def add():
     try: store: int = int(store_str)
     except ValueError: return "Bad store number", 400
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
-    
-    print(type(request.form["image"]))
     
     b_item: serverLib.items.BaseItem = {
         "title": serverLib.helpers.ignoredown(request.form.get("title"), "title", lDB),
