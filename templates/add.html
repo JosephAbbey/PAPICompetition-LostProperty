@@ -13,46 +13,70 @@
         <div style="height: 3.8rem"></div>
 
         <div id="camera">
-            <button id="start-camera">Start Camera</button>
+            <button id="camera">Take photo</button>
             <video id="video" width="320" height="240" autoplay></video>
-            <button id="click-photo">Click Photo</button>
-            <canvas id="canvas" width="320" height="240"></canvas>
+            <canvas id="canvas" width="320" height="240" hidden></canvas>
             <script>
-                let camera_button = document.querySelector("#start-camera");
+                let camera_button = document.querySelector("#camera");
                 let video = document.querySelector("#video");
-                let click_button = document.querySelector("#click-photo");
+                
+                navigator.mediaDevices.getUserMedia({video: true})
+                    .then(stream => {
+                        video.srcObject = stream; 
+                        return video.play();
+                    })
+                    .then(() => {
+                        camera_button.disabled = false;
+                        camera_button.onclick = e => {
+                            takeASnap().then(a => {
+                                var file = new File([a], "img.jpg", { type:"image/jpeg", lastModified: new Date().getTime() });
+                                
+                                var container = new DataTransfer();
+                                container.items.add(file);
+                                document.querySelector("#image").files = container.files;
+                            });
+                        };
+                    });
 
-                camera_button.addEventListener('click', async function() {
-                    let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                    video.srcObject = stream;
-                });
-
-                click_button.addEventListener('click', function() {
-                    console.log(video.srcObject);
-                });
+                function takeASnap(){
+                    const canvas = document.querySelector('#canvas'); 
+                    const ctx = canvas.getContext('2d'); 
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0,0);
+                    return new Promise((res, rej)=>{
+                        canvas.toBlob(res, 'image/jpeg');
+                    });
+                }
             </script>
         </div>
 
         <form action="/add" method="post">
-            <input type="text" name="title" id="title" placeholder="title">
+            <select name="title" id="title">
+                {% for title in titles %}
+                    <option value="{{ title }}">{{ title }}</option>
+                {% endfor %}
+            </select>
             <select name="category" id="category">
                 {% for category in categories %}
-                    <option value="{{ category }}"></option>
+                    <option value="{{ category }}">{{ category }}</option>
                 {% endfor %}
             </select>
             <select name="colour" id="colour">
                 {% for colour in colours %}
-                    <option value="{{ colour }}"></option>
+                    <option value="{{ colour }}">{{ colour }}</option>
                 {% endfor %}
             </select>
             <button type="button" onclick="takeImage()">Add image</button>
-            <input type="file" hidden>
+            <input id="image" type="file">
             <select name="location" id="location">
                 {% for location in locations %}
-                    <option value="{{ location }}"></option>
+                    <option value="{{ location }}">{{ location }}</option>
                 {% endfor %}
             </select>
-            <input type="text" name="store" placeholder="store">
+            <input type="number" name="store" placeholder="store">
+
+            <button>add</button>
         </form>
     </body>
 </html>
