@@ -166,13 +166,14 @@ def add():
     conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
     lDB: serverLib.database.DB = serverLib.database.DB(conn)
 
+    title_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM title"))))
     categories_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM category"))))
     colours_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM colour"))))
     locations_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM location"))))
 
     # GET request
     if request.method == "GET":
-        return render_template("add.html", categories=categories_list, colours=colours_list, locations=locations_list)
+        return render_template("add.html", title=title_list, categories=categories_list, colours=colours_list, locations=locations_list)
     
     b_item: serverLib.items.BaseItem = {
         "title": request.form.get("title"),
@@ -183,7 +184,7 @@ def add():
         "store": request.form.get("store")
     }
 
-    try: i: serverLib.items.Item = serverLib.items.Item(b_item)
+    try: i: serverLib.items.Item = serverLib.items.Item(b_item, lDB)
     except serverLib.exceptions.BadItem: return "Bad value", 400
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
 
