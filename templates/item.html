@@ -16,6 +16,7 @@
 
         <div class="actions">
             <a
+                onclick="fetch('/request?id={{ id }}')"
                 href="mailto:lostproperty@example.com?subject=Item%20Request&body=I%20would%20like%20to%20request%20item%20{{ title }}%20({{ id }})"
             >
                 <img
@@ -27,9 +28,7 @@
             </a>
 
             {% if session["admin"] %}
-            <a
-                href="/remove?id={{ id }}"
-            >
+            <a href="/remove?id={{ id }}">
                 <img
                     alt="remove"
                     style="height: 1em"

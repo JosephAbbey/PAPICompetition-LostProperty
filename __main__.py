@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import pkg_resources
 import subprocess
 import sqlite3
@@ -59,7 +59,8 @@ def index():
 
 @app.route("/item")
 def item():
-    if not (id := request.args.get("id")):
+    id: Optional[str] = request.args.get("id")
+    if not id:
         return redirect("/")
 
     try: id: int = int(id)
@@ -78,9 +79,10 @@ def item():
 
     return render_template("item.html", id=id, title=i.lookup("title"), json=i.json())
 
-@app.route("/request", methods=["POST"])
+@app.route("/request", methods=["GET"])
 def requestAPI():
-    if not (id := request.form.get("id")):
+    id: Optional[str] = request.args.get("id")
+    if not id:
         return redirect("/")
 
     try: id: int = int(id)
@@ -95,13 +97,14 @@ def requestAPI():
     except serverLib.exceptions.InvalidInput: return redirect("/"), 400
 
     notify: serverLib.helpers.Notify = serverLib.helpers.Notify()
-    notify.request([id])
+    notify.request(id)
 
     return "OK", 200
 
 @app.route("/photo")
 def photoAPI():
-    if not (id := request.args.get("id")):
+    id: Optional[str] = request.args.get("id")
+    if not id:
         return "No ID supplied", 400
 
     try: id: int = int(id)
@@ -127,7 +130,8 @@ def login():
 
     # POST request
 
-    if not (pw := request.form.get("password")):
+    pw: Optional[str] = request.form.get("password")
+    if not pw:
         return "Please enter a password", 401
 
     result: bool = serverLib.adminAuth.login(pw)
@@ -149,24 +153,23 @@ def admin():
     
     notify: serverLib.helpers.Notify = serverLib.helpers.Notify()
 
-    # GET request
-    if request.method == "GET":
-        expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
-        requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
+    expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
+    requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
 
-        expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))}) LIMIT 50") # Get expired items
-        requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))}) LIMIT 50") # Get requested items
+    expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))}) LIMIT 50") # Get expired items
+    requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))}) LIMIT 50") # Get requested items
 
-        return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Joseph fix item list formatting
+    return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Joseph fix item list formatting
 
-    config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB) # Database config object
     
 @app.route("/add", methods=["GET", "POST"])
 @serverLib.adminAuth.checkLogin
 def add():
+    # Database
     conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
     lDB: serverLib.database.DB = serverLib.database.DB(conn)
 
+    # Get dropdown values
     title_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM title"))))
     categories_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM category"))))
     colours_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM colour"))))
@@ -177,7 +180,7 @@ def add():
         return render_template("add.html", titles=title_list, categories=categories_list, colours=colours_list, locations=locations_list)
     
     store_str: str = request.form.get("store")
-    
+
     try: store: int = int(store_str)
     except ValueError: return "Bad store number", 400
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
@@ -186,7 +189,7 @@ def add():
         "title": serverLib.helpers.ignoredown(request.form.get("title"), "title", lDB),
         "category": serverLib.helpers.ignoredown(request.form.get("category"), "category", lDB),
         "colour": serverLib.helpers.ignoredown(request.form.get("colour"), "colour", lDB),
-        "image": request.form.get("image"),
+        "image": request.files.get("image").read(),
         "location": serverLib.helpers.ignoredown(request.form.get("location"), "location", lDB),
         "store": store
     }
@@ -202,7 +205,8 @@ def add():
 @app.route("/remove")
 @serverLib.adminAuth.checkLogin
 def remove():
-    if not (id := request.args.get("id")):
+    id: Optional[str] = request.args.get("id")
+    if not id:
         return "No ID supplied", 400
 
     try: id: int = int(id)
@@ -221,6 +225,15 @@ def remove():
     serverLib.helpers.removeItem(id, lDB)
 
     return redirect("/admin")
+
+@app.route('/settings', methods=["GET", "POST"])
+@serverLib.adminAuth.checkLogin
+def settings():
+    if request.method == "GET":
+        return render_template('settings.html')
+    elif request.method == "POST":
+        return "hello"
+
 
 if __name__ == "__main__":
     app.run()
