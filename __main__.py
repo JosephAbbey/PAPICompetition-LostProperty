@@ -95,7 +95,7 @@ def requestAPI():
     except serverLib.exceptions.InvalidInput: return redirect("/"), 400
 
     notify: serverLib.helpers.Notify = serverLib.helpers.Notify()
-    notify.request([id])
+    notify.request(id)
 
     return "OK", 200
 
@@ -149,24 +149,23 @@ def admin():
     
     notify: serverLib.helpers.Notify = serverLib.helpers.Notify()
 
-    # GET request
-    if request.method == "GET":
-        expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
-        requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
+    expired: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Expired items
+    requested: serverLib.items.ItemHandler = serverLib.items.ItemHandler(lDB) # Requested items
 
-        expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))}) LIMIT 50") # Get expired items
-        requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))}) LIMIT 50") # Get requested items
+    expired.massPull(f"id in ({', '.join(list(map(str, notify.expired())))}) LIMIT 50") # Get expired items
+    requested.massPull(f"id in ({', '.join(list(map(str, notify.requested())))}) LIMIT 50") # Get requested items
 
-        return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Joseph fix item list formatting
+    return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Joseph fix item list formatting
 
-    config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB) # Database config object
     
 @app.route("/add", methods=["GET", "POST"])
 @serverLib.adminAuth.checkLogin
 def add():
+    # Database
     conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
     lDB: serverLib.database.DB = serverLib.database.DB(conn)
 
+    # Get dropdown values
     title_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM title"))))
     categories_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM category"))))
     colours_list: List[str] = flatten_list(list(map(list, lDB.Execute("SELECT name FROM colour"))))

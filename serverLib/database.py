@@ -1,6 +1,4 @@
-"""
-This module handles interactions with any sqlite3 databases.
-"""
+"""This module handles interactions with any sqlite3 databases."""
 
 from typing import Any, List
 import sqlite3
@@ -38,7 +36,7 @@ class DB:
             *args (List[Any]): The values to be substituted in for any ? placeholder characters in the query.
         
         Returns:
-            List[List[Any]]: The results wrapped in a sqlite3 cursor object.
+            List[List[Any]]: A list of sqlite3.Row instances.
         """
         
         x = self.cursor.execute(query, args)
@@ -57,6 +55,13 @@ class DB:
         self.db.commit()
 
     def lastid(self) -> int:
+        """
+        The method for getting the id of the last row to have been added to the database.
+
+        Returns:
+            int: The id of the last row to have been added.
+        """
+
         return self.cursor.lastrowid
     
 class DBConfig:

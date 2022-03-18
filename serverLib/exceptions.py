@@ -1,6 +1,4 @@
-"""
-This module contains relevant exceptions for the serverLib library.
-"""
+"""This module contains relevant exceptions for the serverLib library."""
 
 class InvalidInput(Exception):
     """Indicates the input supplied to a class method or function was invalid."""
