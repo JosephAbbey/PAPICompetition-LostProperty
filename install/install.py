@@ -33,7 +33,7 @@ json.dump(defConfig, open("mainConfig.json", "w"), indent=4)
 
 print("Please wait while the core library is installed...")
 
-library_wheel: str = "serverLib-0.1.0-py3-none-any.whl"
+library_wheel: str = "serverLib-0.2.0-py3-none-any.whl"
 subprocess.run(f"pip3 install {library_wheel}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
 
 from serverLib import serverLib # serverLib can now be imported
