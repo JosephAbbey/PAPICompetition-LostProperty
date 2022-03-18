@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='serverLib',
-    version='0.2.0',
+    version='0.2.2',
     author='Benjamin Jones',
     description='The core library for the LostProperty project',
     license='MIT',

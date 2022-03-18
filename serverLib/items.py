@@ -2,22 +2,14 @@
 This module handles the storage of Items as well as methods relating to singular Items.
 """
 
-from typing import Dict, List, Optional, Tuple, TypedDict, Union
+from typing import Dict, List, Optional, Tuple, Union
 import flask, copy, json
 
 from serverLib import configs, database, exceptions
 
 # Types
 
-class BaseItem(TypedDict):
-    title: int
-    category: int
-    colour: int
-    image: Optional[bytes]
-    location: int
-    store: int
-
-item_fields = Union[int, bytes]
+item_fields = Union[int, Optional[bytes]]
 
 # Classes
 
@@ -35,19 +27,15 @@ class Item:
         
     Attributes:
         _db (serverLib.database.DB): The database the `title`, `category`, and `location` IDs reference.
-        _item (serverLib.items.BaseItem): The dictionary holding all necessary details about the Item.
+        _item (Dict[str, serverLib.items.item_fields]): The dictionary holding all necessary details about the Item.
     """
     
-    def __init__(self, fields: BaseItem, db: database.DB) -> None:
+    def __init__(self, fields: Dict[str, item_fields], db: database.DB) -> None:
         """
         The constructor for the Item class.
 
         Parameters:
-            title (int): The ID of the item's title in the `title` table.
-            category (int): The ID of the item's category in the `category` table.
-            image (bytes | None): The bytes of the item's image.
-            location (int): The ID of the item's location in the `locations` table.
-            store (int): The item's store number
+            fields (Dict[str, item_fields]): The dictionary holding the item's values.
             db (serverLib.database.DB): The database containing the `title`, `category`, and `location` tables.
         """
 
@@ -72,7 +60,7 @@ class Item:
             raise exceptions.BadItem("Invalid store (Promise 3 was broken)")
 
         self._db: database.DB = db
-        self._item: BaseItem = fields
+        self._item: Dict[str, item_fields] = fields
     
     # Internal methods
 
@@ -89,12 +77,12 @@ class Item:
         
         return self._db.Execute(f"SELECT name FROM {table} WHERE id = ?", self._item[table])[0][0]
 
-    def rawdict(self) -> BaseItem:
+    def rawdict(self) -> Dict[str, item_fields]:
         """
-        The method for getting a copy of an item's interal BaseItem dict.
+        The method for getting a copy of an item's interal _item dict.
 
         Returns:
-            serverLib.items.BaseItem: The item's BaseItem
+            Dict[str, serverLib.items.item_fields]: The item's fields.
         """
 
         return copy.deepcopy(self._item)
@@ -107,7 +95,7 @@ class Item:
             Dict[str, serverLib.items.item_fields]: The formatted dictionary.
         """
 
-        inner: BaseItem = self.rawdict()
+        inner: Dict[str, item_fields] = self.rawdict()
         inner.pop("image", None)
         
         inner["title"] = self.lookup("title")
@@ -169,12 +157,12 @@ class Item:
         return response
     
     def __str__(self) -> str:
-        inner: BaseItem = self.dict()
+        inner: Dict[str, item_fields] = self.dict()
         
         return f"{inner['category']} {inner['title']} of colour {inner['colour']} found in {inner['location']} currently stored in box {inner['store']}"
     
     def __repr__(self) -> str:
-        return f"{self._item=}"
+        return f"self._item = {self._item}"
 
 class ItemHandler:
     """
@@ -185,7 +173,7 @@ class ItemHandler:
         
     Attributes:
         _db (serverLib.database.DB): The database contianing all the Items.
-        _items (List[serverLib.items.BaseItem]): The list holding all the handler's Item instances.
+        _items (List[Dict[str, serverLib.items.item_fields]]): The list holding all the handler's Item instances.
     """
 
     def __init__(self, db: database.DB) -> None:
@@ -200,7 +188,7 @@ class ItemHandler:
             raise exceptions.BadDB # Validate input
 
         self._db: database.DB = db
-        self._items: Dict[int, BaseItem] = dict()
+        self._items: Dict[int, Dict[str, item_fields]] = dict()
 
     # Input methods
 
@@ -209,7 +197,7 @@ class ItemHandler:
             raise exceptions.InvalidInput # Validate input
 
         query: str = "SELECT title, category, colour, image, location, store FROM items WHERE id = ?"
-        fields: BaseItem = dict(self._db.Execute(query, id)[0])
+        fields: Dict[str, item_fields] = dict(self._db.Execute(query, id)[0])
         
         if not fields:
             raise exceptions.InvalidInput("Bad ID")
@@ -241,7 +229,7 @@ class ItemHandler:
         return ', '.join(list(map(str, self.items())))
        
     def __repr__(self) -> str:
-        return f"{self._items=}"
+        return f"self._items = {self._items}"
     
     def json(self) -> str:
         return json.dumps(self.get())

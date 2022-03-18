@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 import pkg_resources
 import subprocess
 import sqlite3
@@ -10,7 +10,7 @@ modules = [
 
 installed = [i.key for i in pkg_resources.working_set]
 
-install_lambda = lambda name: subprocess.run(f"pip3 install {name}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+install_lambda = lambda name: subprocess.run(f"python3.7 -m pip install {name}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
 [install_lambda(name) for name in modules if name not in installed]
 
 from flask import Flask, redirect, render_template, request, session
@@ -185,7 +185,7 @@ def add():
     except ValueError: return "Bad store number", 400
     except Exception as e: return f"{type(e)} : {e}", 500  # General error case
     
-    b_item: serverLib.items.BaseItem = {
+    b_item: Dict[str, serverLib.items.item_fields] = {
         "title": serverLib.helpers.ignoredown(request.form.get("title"), "title", lDB),
         "category": serverLib.helpers.ignoredown(request.form.get("category"), "category", lDB),
         "colour": serverLib.helpers.ignoredown(request.form.get("colour"), "colour", lDB),
@@ -233,7 +233,6 @@ def settings():
         return render_template('settings.html')
     elif request.method == "POST":
         return "hello"
-
 
 if __name__ == "__main__":
     app.run()
