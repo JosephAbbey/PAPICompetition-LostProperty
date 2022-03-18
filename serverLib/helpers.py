@@ -1,6 +1,4 @@
-"""
-This module contains a number of helpful functions for the serverLib library.
-"""
+"""This module contains a number of helpful functions for the serverLib library."""
 
 from typing import Dict, List, Optional, Set
 import datetime, json, os
@@ -12,18 +10,27 @@ class Notify:
     The class for dealing with items leaving the system.
     
     Attributes:
-        file (str): The file to save ids to.
+        file (str): The file to save data to.
         data (Dict[str, Set[int]]): A dictionary holding two sets of ids (one for expired items, one for requested items).
     """
     
     def __init__(self, savefile: str = configs.NOTIFY_FILE) -> None:
-        if not isinstance(savefile, str):
+        """
+        The constructor for the Notify class.
+
+        Parameters:
+            savefile (str): The file to saved data to.
+        """
+
+        if not isinstance(savefile, str): # Verify that the savefile is a string
             raise exceptions.InvalidInput
         
         self.file: str = savefile
         
+        # Create the savefile if it does not exist
         if not os.path.isfile(savefile): open(savefile, "w").close()
         
+        # Read data from savefile
         with open(self.file, "r") as f:
             try: self.data: Dict[str, List[int]] = dict(json.load(f))
             except json.decoder.JSONDecodeError: self.data: Dict[str, Set[int]] = {"exp": [], "req": []}
@@ -31,31 +38,68 @@ class Notify:
         self.__save()
     
     def __save(self) -> None:
+        # The internal save method, not part of the public API
+
         with open(self.file, "w") as f:
             json.dump(self.data, f, indent=4)
     
     def expired(self) -> List[int]:
+        """
+        The method for getting the list of expired ids from a Notify instance.
+
+        Returns:
+            List[int]: The list of ids.
+        """
+
         return self.data["exp"]
 
     def requested(self) -> List[int]:
+        """
+        The method for getting the list of requested ids from a Notify instance.
+
+        Returns:
+            List[int]: The list of ids.
+        """
+
         return self.data["req"]
 
     def expire(self, ids: List[int]) -> None:
+        """
+        The method for adding a list of ids to the expired ids list.
+        This method does not add the id if it exists in the requested ids list or it already exists in the expired ids list.
+
+        Parameters:
+            ids (List[int]): The list of ids to add.
+        """
+
+        # Remove ids that already exists or are in the requested list
         valid_ids: List[int] = [id for id in ids if (id not in self.requested() and id not in self.expired())]
 
+        # Add remaining ids to expired list
         list(map(self.expired().append, valid_ids))
 
+        # Save
         self.__save()
 
-    def request(self, ids: List[int]) -> None:
-        valid_ids: List[int] = [id for id in ids if id not in self.requested()]
+    def request(self, id: int) -> None:
+        """
+        The method for adding an ids to the requested ids list.
+        This method does not add the id if it already exists in the requested ids list and removes it from the expired ids list if it is there.
 
-        expired: List[int] = self.expired()
-        for id in valid_ids:
-            if id in expired: expired.remove(id)
+        Parameters:
+            ids (int): The id to add.
+        """
 
-        list(map(self.requested().append, valid_ids))
+        # Return if already in requested ids list
+        if id in self.requested(): return
 
+        # Remove from expired ids list if it is there
+        if id in self.expired(): expired.remove(id)
+
+        # Add id to requested
+        self.requested().append(id)
+
+        # Save
         self.__save()
 
 def ignoredown(value: str, table: str, db: database.DB) -> Optional[int]:
