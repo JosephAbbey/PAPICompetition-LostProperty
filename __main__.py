@@ -222,5 +222,14 @@ def remove():
 
     return redirect("/admin")
 
+@app.route('/settings', methods=["GET", "POST"])
+@serverLib.adminAuth.checkLogin
+def settings():
+    if request.method == "GET":
+        return render_template('settings.html')
+    elif request.method == "POST":
+        return "hello"
+
+
 if __name__ == "__main__":
     app.run()

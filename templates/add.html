@@ -3,7 +3,7 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{{ title }}</title>
+        <title>Add Item</title>
         <link rel="stylesheet" href="/static/style.css" />
         <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
     </head>
@@ -76,19 +76,19 @@
             <label for="title">Title: </label>
             <select title="title" name="title" id="title">
                 {% for title in titles %}
-                <option value="{{ title }}">{{ title }}</option>
+                    <option value="{{ title }}">{{ title }}</option>
                 {% endfor %}
             </select>
             <label for="category">Category: </label>
             <select title="category" name="category" id="category">
                 {% for category in categories %}
-                <option value="{{ category }}">{{ category }}</option>
+                    <option value="{{ category }}">{{ category }}</option>
                 {% endfor %}
             </select>
             <label for="colour">Colour: </label>
             <select title="colour" name="colour" id="colour">
                 {% for colour in colours %}
-                <option value="{{ colour }}">{{ colour }}</option>
+                    <option value="{{ colour }}">{{ colour }}</option>
                 {% endfor %}
             </select>
             <button
@@ -101,7 +101,7 @@
             <label for="location">Location: </label>
             <select title="location" name="location" id="location">
                 {% for location in locations %}
-                <option value="{{ location }}">{{ location }}</option>
+                    <option value="{{ location }}">{{ location }}</option>
                 {% endfor %}
             </select>
             <label for="store">Store: </label>
