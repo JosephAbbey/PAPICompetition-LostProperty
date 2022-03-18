@@ -97,7 +97,9 @@ def update(new: str) -> Optional[str]:
     Returns:
         Optional[str]: A str on faliure, None on success.
     """
-    if not (msg := strength(new)) is None:
+
+    msg: Optional[str] = strength(new)
+    if not msg is None:
         return msg
     
     with open(f"{configs.DATA_FOLDER}/admin_hash.hash", "w") as f:

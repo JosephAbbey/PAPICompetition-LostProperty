@@ -159,7 +159,8 @@ class Item:
             flask.Response: The formatted flask image response.
         """
 
-        if not (img := self._item.get("image")):
+        img: Optional[bytes] = self._item.get("image")
+        if not img:
             img: bytes = default
 
         response: flask.Response = flask.make_response(img)

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import pkg_resources
 import subprocess
 import sqlite3
@@ -59,7 +59,8 @@ def index():
 
 @app.route("/item")
 def item():
-    if not (id := request.args.get("id")):
+    id: Optional[str] = request.args.get("id")
+    if not id:
         return redirect("/")
 
     try: id: int = int(id)
@@ -80,7 +81,8 @@ def item():
 
 @app.route("/request", methods=["GET"])
 def requestAPI():
-    if not (id := request.args.get("id")):
+    id: Optional[str] = request.args.get("id")
+    if not id:
         return redirect("/")
 
     try: id: int = int(id)
@@ -101,7 +103,8 @@ def requestAPI():
 
 @app.route("/photo")
 def photoAPI():
-    if not (id := request.args.get("id")):
+    id: Optional[str] = request.args.get("id")
+    if not id:
         return "No ID supplied", 400
 
     try: id: int = int(id)
@@ -127,7 +130,8 @@ def login():
 
     # POST request
 
-    if not (pw := request.form.get("password")):
+    pw: Optional[str] = request.form.get("password")
+    if not pw:
         return "Please enter a password", 401
 
     result: bool = serverLib.adminAuth.login(pw)
@@ -201,7 +205,8 @@ def add():
 @app.route("/remove")
 @serverLib.adminAuth.checkLogin
 def remove():
-    if not (id := request.args.get("id")):
+    id: Optional[str] = request.args.get("id")
+    if not id:
         return "No ID supplied", 400
 
     try: id: int = int(id)
