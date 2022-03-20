@@ -29,7 +29,7 @@
 ### Installation commands
 
 ```sh
-wget "https://github.com/JosephAbbey/PAPICompetition-LostProperty/releases/download/v1.0.1/install.sh"; bash ./install.sh
+wget "https://github.com/JosephAbbey/PAPICompetition-LostProperty/releases/latest/download/install.sh"; bash ./install.sh
 ```
 
 ### Run command
