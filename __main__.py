@@ -76,7 +76,7 @@ def item():
 
     i: serverLib.items.Item = handler.items()[0]
 
-    return render_template("item.html", id=id, title=i.lookup("title"), json=i.json())
+    return render_template("item.html", id=id, title=i.lookup("title"), json=i.json(), store=i.dict()["store"])
 
 @app.route("/request", methods=["GET"])
 def requestAPI():

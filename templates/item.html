@@ -13,6 +13,9 @@
         <div style="height: 3.8rem"></div>
 
         <catalogue-item id="{{ id }}" data="{{ json }}"></catalogue-item>
+        {% if session["admin"] %}
+        <span id="box">Box: {{ store }}</span>
+        {% endif %}
 
         <div class="actions">
             <a

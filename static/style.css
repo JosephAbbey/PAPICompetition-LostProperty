@@ -96,6 +96,17 @@ select {
     float: right;
 }
 
+#box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0.5rem;
+    margin-left: 1.5rem;
+    width: 21rem;
+    font-size: 2rem;
+}
+
 select {
     border-right: solid 0.25rem rgb(41 42 46);
 }
