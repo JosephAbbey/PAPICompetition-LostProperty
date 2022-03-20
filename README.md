@@ -1,80 +1,90 @@
 # LostProperty
 
-# Description:
+## Description
 
-## The Problem:
+### The Problem
+
 The price of living is rising all the time, and thus saving money where possible is becoming more important as time goes on. Equally, as we become more aware of the effects of mass production on the environment, we must make sure to limit unnecessary purchases. A source of issue for both of these problems is the inefficiency of our current lost property system. Its current design makes locating lost items hard even when they have been discovered, and unclaimed items are seemingly lost to time as there is no good record of how long they have been there; resulting in items being able to remain indefinitely.
 
-## The Solution:
+### The Solution
+
 The solution is to create an accessible catalogue-like system which allows easy access to a record of items currently held in the lost property system. This system would categorize items by their characteristics and would flag items which have been unclaimed for longer than a user-specified time-frame. This would make it easier to identify if a lost item has made its way to lost property and would allow unclaimed items to be recycled or donated to charity.
 
-# Details
+## Usage
 
-## The Team
+[SETUP.md](other/SETUP.md)
+
+## Details
+
+### The Team
 
 Name     | GitHub Username |
 :-------:|:---------------:|
-Joseph A | JosephAbbey     |
-Ben J    | BenjaminJones07 |
-Micah B  | 123mjb          |
-Oxford W | notaguydaddy    |
-Aditya C | JustTyping1     |
+Joseph A | @JosephAbbey    |
+Ben J    | @BenjaminJones07|
+Micah B  | @123mjb         |
+Oxford W | @notaguydaddy   |
+Aditya C | @JustTyping1    |
 James U  |                 |
 Alex P   |                 |
 
-## Languages:
+### Languages
+
 - Back-end : Python
 - Communication : Flask API
 - Front-end : HTML/JS (React possibly)
 
-# List of Objectives
+## List of Objectives
 
-- ## Database:
-    - Items
-        - id       : INT
-        - title    : Names[id]
-        - category : Categories[id]
-        - image    : BLOB
-        - foundIn  : Locations[id]
-        - storeIn  : INT (Boxes will be numbered)
-        - desc     : TEXT
+### Database
 
-    - Locations
-        - id           : INT
-        - locationName : STRING
+- Items
+  - id       : INT
+  - title    : Names[id]
+  - category : Categories[id]
+  - image    : BLOB
+  - foundIn  : Locations[id]
+  - storeIn  : INT (Boxes will be numbered)
+  - desc     : TEXT
 
-    - Categories
-        - id    : INT
-        - name  : STRING
+- Locations
+  - id           : INT
+  - locationName : STRING
 
-    - Names
-        - id       : INT
-        - name     : TEXT
+- Categories
+  - id    : INT
+  - name  : STRING
 
-- ## Back-end:
-    - Notify manager (Pseudone)
-        - Send message to manager
-    - Add item (Pseudone) (Done)
-        - Verify input
-        - Add entry to database
-    - Get items (Pseudone)
-        - Check for categories
-        - Get corresponding database entries
-    - Remove item (Pseudone) (Done)
-        - Verify input
-        - Remove entry from database
-    - Item expiry (Pseudone) (Done)
-        - Get items with entry timestamp before certain timestamp
-        - Remove item
-        - Notify manager with appropriate message
-    - Photo get (Pseudone) (Done)
-        - Verify valid ID
-        - Return DB BLOB as Photo
+- Names
+  - id       : INT
+  - name     : TEXT
 
-- ## Front-end:
-    - Catalogue
-    - Categories
-    - Details
-    - Add item
-    - Remove item
-    - Claim item
+## Back-end
+
+- Notify manager (Pseudone)
+  - Send message to manager
+- Add item (Pseudone) (Done)
+  - Verify input
+  - Add entry to database
+- Get items (Pseudone)
+  - Check for categories
+  - Get corresponding database entries
+- Remove item (Pseudone) (Done)
+  - Verify input
+  - Remove entry from database
+- Item expiry (Pseudone) (Done)
+  - Get items with entry timestamp before certain timestamp
+  - Remove item
+  - Notify manager with appropriate message
+- Photo get (Pseudone) (Done)
+  - Verify valid ID
+  - Return DB BLOB as Photo
+
+## Front-end
+
+- Catalogue
+- Categories
+- Details
+- Add item
+- Remove item
+- Claim item
