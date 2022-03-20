@@ -252,5 +252,12 @@ def settings():
     
     return redirect("/settings")
 
+@app.route("/logout")
+@serverLib.adminAuth.checkLogin
+def logout():
+    session.clear()
+    
+    return redirect("/")
+
 if __name__ == "__main__":
     app.run()
