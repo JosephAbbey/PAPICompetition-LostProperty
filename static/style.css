@@ -25,6 +25,7 @@ body {
     grid-template-columns: 2rem 8rem;
     width: fit-content;
     margin: 2rem;
+    text-align: center;
 }
 
 .actions a img {
