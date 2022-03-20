@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Install required packages
 yes | sudo apt-get install nginx
