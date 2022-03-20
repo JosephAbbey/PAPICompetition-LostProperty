@@ -131,12 +131,12 @@ def login():
 
     pw: Optional[str] = request.form.get("password")
     if not pw:
-        return "Please enter a password", 401
+        return redirect("/login")
 
     result: bool = serverLib.adminAuth.login(pw)
 
     if not result:
-        return "Password was incorrect", 401
+        return redirect("/login")
 
     session["admin"] = True
 
