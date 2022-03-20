@@ -73,7 +73,6 @@ print('Removing setup files...')
     
 os.remove('data.zip')
 os.remove(library_wheel)
-os.remove(__file__)
 
 print('Fully installed!')
 "
