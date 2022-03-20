@@ -1,11 +1,11 @@
 #!/bin/sh
 
 # Install required packages
-sudo apt-get install nginx
-sudo apt-get install python3-pip
+yes | sudo apt-get install nginx
+yes | sudo apt-get install python3-pip
 
 # Install uwsgi
-sudo pip3 install uwsgi
+yes | sudo pip3 install uwsgi
 
 # Install the actual LostProperty system
 sudo python3 -c "
