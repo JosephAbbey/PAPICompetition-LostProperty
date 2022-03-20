@@ -248,7 +248,7 @@ def settings():
     if table == "title": func: Callable = config.addTitle
     else: func: Callable = config.addLocation
     
-    func(value)
+    func(value.title())
     
     return redirect("/settings")
 
