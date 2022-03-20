@@ -31,8 +31,8 @@ export default class CatalogueItem extends HTMLElement {
                 ${this.attrs.title}
               </span>
               <div class="colour"></div> ${this.attrs.colour}                   <br />
-              <img class="icon" alt="icon" src="/static/icons/${this.attrs.category}.svg"></img> ${this.attrs.category.toLowerCase()}     <br />
-              <img class="icon" alt="icon" src="/static/icons/door.svg"></img> ${this.attrs["found-in"].toLowerCase()}  <br />
+              <img class="icon" alt="icon" src="/static/icons/${this.attrs.category.toLowerCase()}.svg"></img> ${this.attrs.category}     <br />
+              <img class="icon" alt="icon" src="/static/icons/door.svg"></img> ${this.attrs["found-in"]}  <br />
             </div>
           </div>
         `;
