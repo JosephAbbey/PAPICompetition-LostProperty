@@ -6,10 +6,13 @@
   - data/
     - defImage.png
     - Template.sql
-  - templates/
   - static/
-  - serverLib's wheel file
+  - templates/
   - \_\_main\_\_.py
+  - LICENSE
+  - README.md
+  - run.sh
+  - serverLib's wheel file
 
 - setup.py
 
@@ -17,7 +20,7 @@
 
 ## Setup script
 
- 1. Unzips `static/`, `templates/`, `data/`, `serverLib`'s wheel file, and `__main__.py` from `data.zip`
+ 1. Unzips files from `data.zip`
  2. Generate `mainConfig.json` for serverLib
  3. Install the `serverLib` package from its wheel file
  4. Create the database according to `Template.sql`
