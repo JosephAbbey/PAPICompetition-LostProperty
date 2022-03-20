@@ -7,6 +7,9 @@ yes | sudo apt-get install python3-pip
 # Install uwsgi
 yes | sudo pip3 install uwsgi
 
+# Download data.zip (will need to update version name gor each version)
+wget "https://github.com/JosephAbbey/PAPICompetition-LostProperty/releases/download/v0.0.2-alpha/install.sh"
+
 # Install the actual LostProperty system
 sudo python3 -c "
 from typing import Dict, Optional, Union
@@ -62,15 +65,15 @@ db.ExecuteScript(open(f'{serverLib.configs.DATA_FOLDER}/Template.sql')) # Apply 
 
 while True:
     password: str = input('Create an admin password: ')
-    
+
     details: Optional[str] = serverLib.adminAuth.update(password)
-    
+
     if details is None: break
-    
+
     print(details)
-    
+
 print('Removing setup files...')
-    
+
 os.remove('data.zip')
 os.remove(library_wheel)
 
