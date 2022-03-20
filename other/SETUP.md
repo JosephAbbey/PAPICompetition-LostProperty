@@ -35,5 +35,5 @@ wget "https://github.com/JosephAbbey/PAPICompetition-LostProperty/releases/downl
 ### Run command
 
 ```sh
-uwsgi --socket 0.0.0.0:8000 --protocol=http --file __main__.py --callable app
+bash ./run.sh
 ```
