@@ -8,7 +8,7 @@ yes | sudo apt-get install python3-pip
 yes | sudo pip3 install uwsgi
 
 # Download data.zip (will need to update version name gor each version)
-wget "https://github.com/JosephAbbey/PAPICompetition-LostProperty/releases/download/v0.0.2-alpha/install.sh"
+wget "https://github.com/JosephAbbey/PAPICompetition-LostProperty/releases/download/v0.0.2-alpha/data.zip"
 
 # Install the actual LostProperty system
 sudo python3 -c "
