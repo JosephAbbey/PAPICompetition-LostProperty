@@ -34,7 +34,9 @@
                     let video = document.querySelector('#video');
 
                     navigator.mediaDevices
-                        .getUserMedia({ video: true })
+                        .getUserMedia({
+                            video: { facingMode: { exact: 'environment' } },
+                        })
                         .catch((err) => {
                             console.log(err);
                             alert('Camera not available');
