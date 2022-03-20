@@ -19,9 +19,15 @@
                 <option value="location">Room</option>
             </select>
 
-            <input type="text" name="value" id="value">
+            <label for="value">Value: </label>
+            <input type="text" name="value" id="value" />
 
-            <button type="submit">Add</button>
+            <button
+                type="submit"
+                onclick="for (var input of this.parentElement.querySelectorAll('input')) { input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1) }"
+            >
+                Add
+            </button>
         </form>
     </body>
 </html>

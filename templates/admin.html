@@ -26,24 +26,31 @@
         <div class="admin">
             <div class="requested">
                 <h2>Requested Items</h2>
-                {% for (id, item) in requested.items() %}
-                <catalogue-item
-                    id="{{ id }}"
-                    data="{{ item }}"
-                    in-list="1"
-                ></catalogue-item>
-                {% endfor %}
+                <div>
+                    {% for (id, item) in requested.items() %}
+                    <catalogue-item
+                        id="{{ id }}"
+                        data="{{ item }}"
+                        in-list="1"
+                    ></catalogue-item>
+                    {% endfor %}
+                </div>
             </div>
             <div class="expired">
                 <h2>Expired Items</h2>
-                {% for (id, item) in expired.items() %}
-                <catalogue-item
-                    id="{{ id }}"
-                    data="{{ item }}"
-                    in-list="1"
-                ></catalogue-item>
-                {% endfor %}
+                <div>
+                    {% for (id, item) in expired.items() %}
+                    <catalogue-item
+                        id="{{ id }}"
+                        data="{{ item }}"
+                        in-list="1"
+                    ></catalogue-item>
+                    {% endfor %}
+                </div>
             </div>
         </div>
+        <button type="button" onclick="window.location = '/logout'" id="login">
+            Logout
+        </button>
     </body>
 </html>

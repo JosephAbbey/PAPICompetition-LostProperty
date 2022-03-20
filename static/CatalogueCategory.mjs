@@ -18,7 +18,7 @@ export default class CatalogueCategory extends HTMLElement {
             <div id="${this.attrs.category}" class="wrapper">
                 ${
                     this.attrs.category != 'Other'
-                        ? `<img class="icon" alt="icon" src="/static/icons/${this.attrs.category}.svg"></img>`
+                        ? `<img class="icon" alt="icon" src="/static/icons/${this.attrs.category.toLowerCase()}.svg"></img>`
                         : ''
                 }
                 ${this.attrs.category}

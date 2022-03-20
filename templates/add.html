@@ -23,6 +23,12 @@
                 ></video>
                 <canvas id="canvas" width="320" height="240" hidden></canvas>
                 <button id="camera">Take photo</button>
+                <button
+                    id="close"
+                    onclick="this.parentElement.parentElement.style.display = 'none'"
+                >
+                    Close
+                </button>
                 <script>
                     let camera_button = document.querySelector('#camera');
                     let video = document.querySelector('#video');
@@ -76,19 +82,19 @@
             <label for="title">Title: </label>
             <select title="title" name="title" id="title">
                 {% for title in titles %}
-                    <option value="{{ title }}">{{ title }}</option>
+                <option value="{{ title }}">{{ title }}</option>
                 {% endfor %}
             </select>
             <label for="category">Category: </label>
             <select title="category" name="category" id="category">
                 {% for category in categories %}
-                    <option value="{{ category }}">{{ category }}</option>
+                <option value="{{ category }}">{{ category }}</option>
                 {% endfor %}
             </select>
             <label for="colour">Colour: </label>
             <select title="colour" name="colour" id="colour">
                 {% for colour in colours %}
-                    <option value="{{ colour }}">{{ colour }}</option>
+                <option value="{{ colour }}">{{ colour }}</option>
                 {% endfor %}
             </select>
             <button
@@ -97,11 +103,11 @@
             >
                 Add image
             </button>
-            <input name="image" id="image" type="file" hidden/>
+            <input name="image" id="image" type="file" hidden />
             <label for="location">Location: </label>
             <select title="location" name="location" id="location">
                 {% for location in locations %}
-                    <option value="{{ location }}">{{ location }}</option>
+                <option value="{{ location }}">{{ location }}</option>
                 {% endfor %}
             </select>
             <label for="store">Store: </label>

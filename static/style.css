@@ -92,6 +92,10 @@ select {
     border: none;
 }
 
+#login {
+    float: right;
+}
+
 select {
     border-right: solid 0.25rem rgb(41 42 46);
 }
@@ -100,10 +104,11 @@ select {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 1rem;
+    text-align: center;
 }
 
-.admin .requested,
-.admin .expired {
+.admin .requested div,
+.admin .expired div {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
