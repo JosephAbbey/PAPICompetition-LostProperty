@@ -51,7 +51,6 @@ INSERT INTO colour (name) VALUES ("Orange");
 INSERT INTO colour (name) VALUES ("Yellow");
 INSERT INTO colour (name) VALUES ("Blue");
 INSERT INTO colour (name) VALUES ("Cyan");
-INSERT INTO colour (name) VALUES ("Purple");
 INSERT INTO colour (name) VALUES ("Green");
 INSERT INTO colour (name) VALUES ("Purple");
 INSERT INTO colour (name) VALUES ("Pink");

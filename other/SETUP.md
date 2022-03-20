@@ -11,14 +11,17 @@
 
  - setup.py
 
+ - setup.sh
+
 
 # Setup script
 
  1. Unzips `static/`, `templates/`, `data/`, `serverLib`'s wheel file, and `__main__.py` from `data.zip`
- 2. Install the `serverLib` package from its wheel file
  2. Generate `mainConfig.json` for serverLib
- 3. Create the database according to `Template.sql`
- 4. Gets and hashes an admin password
+ 3. Install the `serverLib` package from its wheel file
+ 4. Create the database according to `Template.sql`
+ 5. Get and hash an admin password
+ 6. Remove installation files
 
 # PI Commands:
 
@@ -35,8 +38,8 @@ sudo apt-get install python3-pip
 sudo pip3 install uwsgi
 
 # Install the actual LostProperty system
-sudo chown www-data LostProperty/
-sudo python3 LostProperty/install.py
+sudo sudo chmod -R a+rwx ./
+sudo python3 ./install.py
 ```
 
 ### Installation commands
@@ -44,12 +47,11 @@ sudo python3 LostProperty/install.py
 ```
 Some wget or git command
 
-sudo bash install.bat
+sudo sh install.bat
 ```
 
 ### Run command
 
 ```
-uwsgi --socket 0.0.0.0:8000 --protocol=http --file LostProperty/__main__.py --callable app
+uwsgi --socket 0.0.0.0:8000 --protocol=http --file __main__.py --callable app
 ```
-

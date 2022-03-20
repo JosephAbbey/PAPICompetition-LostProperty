@@ -1,4 +1,4 @@
-# LostProperty *(Name not final)*
+# LostProperty
 
 # Description:
 

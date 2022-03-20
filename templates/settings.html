@@ -13,23 +13,15 @@
         <div style="height: 3.8rem"></div>
 
         <form action="/settings" method="post">
-            <label for="table">Table: </label>
+            <label for="table">Field: </label>
             <select name="table" id="table">
-                <option value="category">category</option>
-                <option value="colour">colour</option>
-                <option value="title">title</option>
-                <option value="room">room</option>
+                <option value="title">Title</option>
+                <option value="location">Room</option>
             </select>
 
-            <label for="isadd">Add/Remove: </label>
-            <select name="isadd" id="isadd">
-                <option value="add">add</option>
-                <option value="remove">remove</option>
-            </select>
+            <input type="text" name="value" id="value">
 
-            <input type="text" name="text" id="text">
-
-            <button type="submit">Submit</button>
+            <button type="submit">Add</button>
         </form>
     </body>
 </html>

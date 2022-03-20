@@ -87,7 +87,7 @@ class DBConfig:
         # The internal add method, not part of the public API
         
         if not (isinstance(table, str) and isinstance(value, str)): raise exceptions.InvalidInput
-        self._db.Execute(f"INSERT OR IGNORE INTO {table} VALUES (?)", value)
+        self._db.Execute(f"INSERT OR IGNORE INTO {table} (name) VALUES (?)", value)
         
     def addLocation(self, location: str) -> None:
         """

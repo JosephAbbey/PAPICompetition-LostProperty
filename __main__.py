@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 import pkg_resources
 import subprocess
 import sqlite3
@@ -10,7 +10,7 @@ modules = [
 
 installed = [i.key for i in pkg_resources.working_set]
 
-install_lambda = lambda name: subprocess.run(f"python3.7 -m pip install {name}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+install_lambda: Callable = lambda name: subprocess.run(f"pip install {name}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
 [install_lambda(name) for name in modules if name not in installed]
 
 from flask import Flask, redirect, render_template, request, session
@@ -26,7 +26,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 Session(app)
 
-flatten_list = lambda l: [item for sublist in l for item in sublist]
+flatten_list: Callable = lambda l: [item for sublist in l for item in sublist]
 
 @app.route("/")
 def index():
@@ -55,7 +55,6 @@ def index():
     handler.massPull(f"{categ} LIMIT {serverLib.configs.PAGE_SIZE} OFFSET {(id - 1) * serverLib.configs.PAGE_SIZE}")
 
     return render_template("index.html", json=handler.get(), categories=categories_list, page=id, max=max_id)
-
 
 @app.route("/item")
 def item():
@@ -143,7 +142,7 @@ def login():
 
     return redirect("/admin")
 
-@app.route("/admin", methods=["GET", "POST"])
+@app.route("/admin")
 @serverLib.adminAuth.checkLogin
 def admin():
     conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
@@ -161,7 +160,6 @@ def admin():
 
     return render_template("admin.html", requested=requested.get(), expired=expired.get()) # Joseph fix item list formatting
 
-    
 @app.route("/add", methods=["GET", "POST"])
 @serverLib.adminAuth.checkLogin
 def add():
@@ -226,13 +224,33 @@ def remove():
 
     return redirect("/admin")
 
-@app.route('/settings', methods=["GET", "POST"])
+@app.route("/settings", methods=["GET", "POST"])
 @serverLib.adminAuth.checkLogin
 def settings():
+    # GET request
     if request.method == "GET":
         return render_template('settings.html')
-    elif request.method == "POST":
-        return "hello"
+    
+    table: str = request.form.get("table")
+    value: str = request.form.get("value")
+    
+    if not (bool(table) and bool(value)):
+        return redirect("/settings")
+    
+    if not table in ["title", "location"]:
+        return redirect("/settings")
+    
+    conn: sqlite3.Connection = sqlite3.connect(serverLib.configs.DATABASE)
+    lDB: serverLib.database.DB = serverLib.database.DB(conn)
+    
+    config: serverLib.database.DBConfig = serverLib.database.DBConfig(lDB)
+    
+    if table == "title": func: Callable = config.addTitle
+    else: func: Callable = config.addLocation
+    
+    func(value)
+    
+    return redirect("/settings")
 
 if __name__ == "__main__":
     app.run()

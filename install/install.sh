@@ -8,5 +8,5 @@ sudo apt-get install python3-pip
 sudo pip3 install uwsgi
 
 # Install the actual LostProperty system
-sudo chown www-data ./
 sudo python3 ./install.py
+sudo chmod -R a+rwx ./
